@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import { Stopwatch } from "./components/stopwatch";
 
-const Greet = () => <h1>Hello, world!</h1>;
-const App = () => <Greet />;
+const App = () => <Stopwatch />;
 
 ReactDOM.render(<App />, document.getElementById("react"));
