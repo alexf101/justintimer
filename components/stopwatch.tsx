@@ -12,8 +12,9 @@ function timeSoFar(
     let timeSinceLastStarted;
     if (lastStartedAt === undefined) {
         timeSinceLastStarted = moment.duration(0);
+    } else {
+        timeSinceLastStarted = moment.duration(moment().diff(lastStartedAt));
     }
-    timeSinceLastStarted = moment.duration(moment().diff(lastStartedAt));
     if (previouslyAccumulated) {
         return timeSinceLastStarted.add(previouslyAccumulated);
     } else {
@@ -54,7 +55,7 @@ export class Stopwatch extends React.Component<{}, StopwatchState> {
     };
     render() {
         return (
-            <div>
+            <StopwatchRoot>
                 <TimeRenderer {...this.state} />
                 <Controls>
                     <StartStopButton
@@ -71,7 +72,7 @@ export class Stopwatch extends React.Component<{}, StopwatchState> {
                         onClick={() => this.setState(Stopwatch.initialState)}
                     ></ResetButton>
                 </Controls>
-            </div>
+            </StopwatchRoot>
         );
     }
 }
@@ -127,8 +128,11 @@ function padZeros(input: number, desiredLength: number): string {
 }
 
 const TimeDisplay = styled.div`
-    font-size: 20px;
-    margin: 12px;
+    font-size: 26px;
+    font-weight: bold;
+    font-family: monospace;
+    margin: 12px auto;
+    text-align: center;
 `;
 
 const StartStopButton = ({
@@ -139,17 +143,30 @@ const StartStopButton = ({
     onClick: () => void;
 }) => {
     const text = running ? "Stop" : "Start";
-    return <button onClick={onClick}>{text}</button>;
+    return <Button onClick={onClick}>{text}</Button>;
 };
 
 const ResetButton = ({ onClick }: { onClick: () => void }) => {
-    return <button onClick={onClick}>Reset</button>;
+    return <Button onClick={onClick}>Reset</Button>;
 };
 
 const Controls = styled.div`
     display: flex;
     flex-direction: row;
+    justify-content: space-around;
     > * {
         flex: 1 0 0;
+        max-width: 100px;
     }
+`;
+
+const StopwatchRoot = styled.div`
+    width: 280px;
+    margin: 16px auto;
+`;
+
+const Button = styled.button`
+    padding: 4px;
+    border-radius: 4px;
+    font-size: 20px;
 `;
