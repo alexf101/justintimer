@@ -1,7 +1,8 @@
 {
     "scripts": {
         "build": "esbuild app.tsx --target=es2015 --bundle --sourcemap --outfile=dist/justintimer.js",
-        "check": "yarn run tsc --noEmit"
+        "check": "yarn run tsc --noEmit",
+        "bc": "parallel -- 'yarn run build --watch' 'yarn run check --watch'"
     },
     "dependencies": {
         "moment": "^2.29.1",

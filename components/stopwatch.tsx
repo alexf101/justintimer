@@ -2,9 +2,6 @@ import moment, { Duration, Moment } from "moment";
 import React from "react";
 import styled from "styled-components";
 
-// debug
-window.moment = moment;
-
 function timeSoFar(
     lastStartedAt: Moment | undefined,
     previouslyAccumulated: Duration | undefined
@@ -19,6 +16,62 @@ function timeSoFar(
         return timeSinceLastStarted.add(previouslyAccumulated);
     } else {
         return timeSinceLastStarted;
+    }
+}
+
+interface TimerState extends StopwatchState {
+    setTime: Duration;
+}
+
+export class Timer extends React.Component<{}, TimerState> {
+    static get initialState() {
+        return {
+            running: false,
+            lastStoppedAtTimerTime: undefined,
+            lastStartedAtWallClockTime: undefined,
+            setTime: moment.duration(10, "seconds"),
+        };
+    }
+    state = Timer.initialState;
+    start = () => {
+        this.setState({
+            running: true,
+            lastStartedAtWallClockTime: moment(),
+        });
+    };
+    stop = () => {
+        this.setState({
+            running: false,
+            lastStoppedAtTimerTime: timeSoFar(
+                this.state.lastStartedAtWallClockTime,
+                this.state.lastStoppedAtTimerTime
+            ),
+        });
+    };
+    render() {
+        return (
+            <StopwatchRoot>
+                <TimeRenderer
+                    {...this.state}
+                    countDownFrom={this.state.setTime}
+                />
+                <Controls>
+                    <StartStopButton
+                        running={this.state.running}
+                        onClick={() => {
+                            if (this.state.running) {
+                                this.stop();
+                            } else {
+                                this.start();
+                            }
+                        }}
+                    />
+                    <ResetButton
+                        onClick={() => this.setState(Stopwatch.initialState)}
+                    ></ResetButton>
+                </Controls>
+            </StopwatchRoot>
+        );
     }
 }
 
@@ -77,7 +130,9 @@ export class Stopwatch extends React.Component<{}, StopwatchState> {
     }
 }
 
-interface TimeRendererProps extends StopwatchState {}
+interface TimeRendererProps extends StopwatchState {
+    countDownFrom?: Duration;
+}
 class TimeRenderer extends React.Component<TimeRendererProps, {}> {
     cancel?: number;
     componentDidMount() {
@@ -106,6 +161,9 @@ class TimeRenderer extends React.Component<TimeRendererProps, {}> {
                 this.props.lastStartedAtWallClockTime,
                 this.props.lastStoppedAtTimerTime
             );
+        }
+        if (this.props.countDownFrom !== undefined) {
+            t = this.props.countDownFrom.clone().subtract(t);
         }
         return (
             <TimeDisplay>

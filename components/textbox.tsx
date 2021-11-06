@@ -4,7 +4,7 @@ import { EditorView } from "prosemirror-view";
 import { Schema, DOMParser } from "prosemirror-model";
 import { schema } from "prosemirror-schema-basic";
 import { addListNodes } from "prosemirror-schema-list";
-import { exampleSetup } from "prosemirror-example-setup";
+import { exampleSetup, buildMenuItems } from "prosemirror-example-setup";
 import "prosemirror-menu/style/menu.css";
 import styled from "styled-components";
 
@@ -13,9 +13,18 @@ import styled from "styled-components";
 const mySchema = new Schema({
     nodes: (addListNodes(schema.spec.nodes, "paragraph block*", "block") as any)
         .remove("image")
+        .remove("blockquote")
+        .remove("heading")
+        .remove("code_block")
         .remove("horizontal_rule"),
-    marks: (schema.spec.marks as any).remove("link"),
+    marks: (schema.spec.marks as any).remove("link").remove("code"),
 });
+// See here for what this returns: https://github.com/ProseMirror/prosemirror-example-setup/blob/06111da08f4aa58b96e52ad4bfba32b1d3ad6fbe/src/menu.js.
+const myMenu: any[] = buildMenuItems(mySchema).fullMenu;
+// Get rid of drop-down menu for headers, I don't want it
+myMenu.splice(1, 1);
+// Get rid of the "select parent node" menu item, I don't want that either.
+myMenu[2].splice(4, 1);
 
 export const Textbox = () => {
     const toolbarRef = createRef<HTMLDivElement>();
@@ -28,7 +37,10 @@ export const Textbox = () => {
         const view = new EditorView(editorRef.current, {
             state: EditorState.create({
                 schema: mySchema,
-                plugins: exampleSetup({ schema: mySchema }),
+                plugins: exampleSetup({
+                    schema: mySchema,
+                    menuContent: myMenu,
+                }),
             }),
         });
     }, []);
