@@ -1,25 +1,14 @@
 import moment, { Duration, Moment } from "moment";
 import React from "react";
 import styled from "styled-components";
+import { TimeSinceState } from "./shared_interfaces";
+import {
+    CountdownTimeRenderer,
+    CountupTimeRenderer,
+    timeSoFar,
+} from "./time_renderer";
 
-function timeSoFar(
-    lastStartedAt: Moment | undefined,
-    previouslyAccumulated: Duration | undefined
-): Duration {
-    let timeSinceLastStarted;
-    if (lastStartedAt === undefined) {
-        timeSinceLastStarted = moment.duration(0);
-    } else {
-        timeSinceLastStarted = moment.duration(moment().diff(lastStartedAt));
-    }
-    if (previouslyAccumulated) {
-        return timeSinceLastStarted.add(previouslyAccumulated);
-    } else {
-        return timeSinceLastStarted;
-    }
-}
-
-interface TimerState extends StopwatchState {
+interface TimerState extends TimeSinceState {
     setTime: Duration;
 }
 
@@ -29,7 +18,7 @@ export class Timer extends React.Component<{}, TimerState> {
             running: false,
             lastStoppedAtTimerTime: undefined,
             lastStartedAtWallClockTime: undefined,
-            setTime: moment.duration(10, "seconds"),
+            setTime: moment.duration(0, "seconds"),
         };
     }
     state = Timer.initialState;
@@ -48,13 +37,95 @@ export class Timer extends React.Component<{}, TimerState> {
             ),
         });
     };
+    reset = () => {
+        // Clears everything except for setTime
+        this.setState({
+            running: false,
+            lastStoppedAtTimerTime: undefined,
+            lastStartedAtWallClockTime: undefined,
+        });
+    };
+    clear = () => {
+        // Clears everything.
+        this.setState(Timer.initialState);
+    };
     render() {
+        // This little factory returns a new function that calls setState with the given duration added to setTime.
+        const makeTimeIncrementer = (duration: Duration) => {
+            return () =>
+                this.setState((prevState) => {
+                    return {
+                        setTime: duration.clone().add(prevState.setTime),
+                    };
+                });
+        };
         return (
             <StopwatchRoot>
-                <TimeRenderer
+                <CountdownTimeRenderer
+                    onCountdownComplete={function (): void {
+                        throw new Error("Function not implemented.");
+                    }}
                     {...this.state}
                     countDownFrom={this.state.setTime}
                 />
+                <TimeButtonGrid>
+                    <AddTimeButton
+                        onClick={makeTimeIncrementer(
+                            moment.duration(5, "seconds")
+                        )}
+                    >
+                        +5s
+                    </AddTimeButton>
+                    <AddTimeButton
+                        onClick={makeTimeIncrementer(
+                            moment.duration(10, "seconds")
+                        )}
+                    >
+                        +10s
+                    </AddTimeButton>
+                    <AddTimeButton
+                        onClick={makeTimeIncrementer(
+                            moment.duration(15, "seconds")
+                        )}
+                    >
+                        +15s
+                    </AddTimeButton>
+                    <AddTimeButton
+                        onClick={makeTimeIncrementer(
+                            moment.duration(20, "seconds")
+                        )}
+                    >
+                        +20s
+                    </AddTimeButton>
+                    <AddTimeButton
+                        onClick={makeTimeIncrementer(
+                            moment.duration(30, "seconds")
+                        )}
+                    >
+                        +30s
+                    </AddTimeButton>
+                    <AddTimeButton
+                        onClick={makeTimeIncrementer(
+                            moment.duration(1, "minute")
+                        )}
+                    >
+                        +1m
+                    </AddTimeButton>
+                    <AddTimeButton
+                        onClick={makeTimeIncrementer(
+                            moment.duration(2, "minutes")
+                        )}
+                    >
+                        +2m
+                    </AddTimeButton>
+                    <AddTimeButton
+                        onClick={makeTimeIncrementer(
+                            moment.duration(5, "minutes")
+                        )}
+                    >
+                        +5m
+                    </AddTimeButton>
+                </TimeButtonGrid>
                 <Controls>
                     <StartStopButton
                         running={this.state.running}
@@ -66,23 +137,23 @@ export class Timer extends React.Component<{}, TimerState> {
                             }
                         }}
                     />
-                    <ResetButton
-                        onClick={() => this.setState(Stopwatch.initialState)}
-                    ></ResetButton>
+                    <Button onClick={this.reset}>Reset</Button>
+                    <Button onClick={this.clear}>Clear</Button>
                 </Controls>
             </StopwatchRoot>
         );
     }
 }
 
-interface StopwatchState {
-    // StopwatchState: running or paused, time last started at, time last played
-    running: boolean;
-    lastStartedAtWallClockTime?: Moment;
-    lastStoppedAtTimerTime?: Duration;
-}
+const AddTimeButton = styled.button``;
 
-export class Stopwatch extends React.Component<{}, StopwatchState> {
+const TimeButtonGrid = styled.div`
+    display: grid;
+    grid-template-columns: auto auto auto;
+    max-width: 500px;
+`;
+
+export class Stopwatch extends React.Component<{}, TimeSinceState> {
     static get initialState() {
         return {
             running: false,
@@ -109,7 +180,7 @@ export class Stopwatch extends React.Component<{}, StopwatchState> {
     render() {
         return (
             <StopwatchRoot>
-                <TimeRenderer {...this.state} />
+                <CountupTimeRenderer {...this.state} />
                 <Controls>
                     <StartStopButton
                         running={this.state.running}
@@ -121,77 +192,16 @@ export class Stopwatch extends React.Component<{}, StopwatchState> {
                             }
                         }}
                     />
-                    <ResetButton
+                    <Button
                         onClick={() => this.setState(Stopwatch.initialState)}
-                    ></ResetButton>
+                    >
+                        Reset
+                    </Button>
                 </Controls>
             </StopwatchRoot>
         );
     }
 }
-
-interface TimeRendererProps extends StopwatchState {
-    countDownFrom?: Duration;
-}
-class TimeRenderer extends React.Component<TimeRendererProps, {}> {
-    cancel?: number;
-    componentDidMount() {
-        this.cancel = requestAnimationFrame(this.loop);
-    }
-    componentWillUnmount() {
-        if (typeof this.cancel === "number") {
-            window.cancelAnimationFrame(this.cancel);
-        }
-    }
-    loop = () => {
-        if (this.props.running) {
-            this.setState({});
-        }
-        this.cancel = requestAnimationFrame(this.loop);
-    };
-    render() {
-        let t;
-        if (
-            !this.props.running &&
-            this.props.lastStoppedAtTimerTime !== undefined
-        ) {
-            t = this.props.lastStoppedAtTimerTime;
-        } else {
-            t = timeSoFar(
-                this.props.lastStartedAtWallClockTime,
-                this.props.lastStoppedAtTimerTime
-            );
-        }
-        if (this.props.countDownFrom !== undefined) {
-            t = this.props.countDownFrom.clone().subtract(t);
-        }
-        return (
-            <TimeDisplay>
-                {`${padZeros(t.hours(), 2)}:${padZeros(
-                    t.minutes(),
-                    2
-                )}:${padZeros(t.seconds(), 2)}.${padZeros(
-                    t.milliseconds(),
-                    3
-                )}`}
-            </TimeDisplay>
-        );
-    }
-}
-
-function padZeros(input: number, desiredLength: number): string {
-    const result = input.toString();
-    const padLength = desiredLength - result.length;
-    return "0".repeat(padLength) + result;
-}
-
-const TimeDisplay = styled.div`
-    font-size: 26px;
-    font-weight: bold;
-    font-family: monospace;
-    margin: 12px auto;
-    text-align: center;
-`;
 
 const StartStopButton = ({
     running,
@@ -202,10 +212,6 @@ const StartStopButton = ({
 }) => {
     const text = running ? "Stop" : "Start";
     return <Button onClick={onClick}>{text}</Button>;
-};
-
-const ResetButton = ({ onClick }: { onClick: () => void }) => {
-    return <Button onClick={onClick}>Reset</Button>;
 };
 
 const Controls = styled.div`
@@ -228,3 +234,5 @@ const Button = styled.button`
     border-radius: 4px;
     font-size: 20px;
 `;
+
+const ClearButton = Button;
