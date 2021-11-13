@@ -5,6 +5,8 @@
         "bc": "parallel -- 'yarn run build --watch' 'yarn run check --watch'"
     },
     "dependencies": {
+        "@types/howler": "^2.2.4",
+        "howler": "^2.2.3",
         "moment": "^2.29.1",
         "prosemirror-example-setup": "^1.1.2",
         "prosemirror-model": "^1.15.0",

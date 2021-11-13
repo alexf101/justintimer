@@ -1,6 +1,13 @@
 import moment, { Duration, Moment } from "moment";
 import React from "react";
 import styled from "styled-components";
+import { Howl } from "howler";
+
+// Setup the new Howl.
+const timesUpSound = new Howl({
+    src: ["./timer-done.mp3"],
+});
+
 import { TimeSinceState } from "./shared_interfaces";
 import {
     CountdownTimeRenderer,
@@ -62,13 +69,24 @@ export class Timer extends React.Component<{}, TimerState> {
         return (
             <StopwatchRoot>
                 <CountdownTimeRenderer
-                    onCountdownComplete={function (): void {
-                        throw new Error("Function not implemented.");
+                    onCountdownComplete={() => {
+                        console.log("Timer done!");
+
+                        // Play the sound.
+                        timesUpSound.play();
+                        this.stop();
                     }}
-                    {...this.state}
                     countDownFrom={this.state.setTime}
+                    {...this.state}
                 />
                 <TimeButtonGrid>
+                    <AddTimeButton
+                        onClick={makeTimeIncrementer(
+                            moment.duration(1, "seconds")
+                        )}
+                    >
+                        +1s
+                    </AddTimeButton>
                     <AddTimeButton
                         onClick={makeTimeIncrementer(
                             moment.duration(5, "seconds")
@@ -82,13 +100,6 @@ export class Timer extends React.Component<{}, TimerState> {
                         )}
                     >
                         +10s
-                    </AddTimeButton>
-                    <AddTimeButton
-                        onClick={makeTimeIncrementer(
-                            moment.duration(15, "seconds")
-                        )}
-                    >
-                        +15s
                     </AddTimeButton>
                     <AddTimeButton
                         onClick={makeTimeIncrementer(
@@ -125,6 +136,7 @@ export class Timer extends React.Component<{}, TimerState> {
                     >
                         +5m
                     </AddTimeButton>
+                    <Button onClick={this.clear}>Clear</Button>
                 </TimeButtonGrid>
                 <Controls>
                     <StartStopButton
@@ -138,7 +150,6 @@ export class Timer extends React.Component<{}, TimerState> {
                         }}
                     />
                     <Button onClick={this.reset}>Reset</Button>
-                    <Button onClick={this.clear}>Clear</Button>
                 </Controls>
             </StopwatchRoot>
         );

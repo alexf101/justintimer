@@ -20,21 +20,7 @@ export function timeSoFar(
     }
 }
 
-interface CountdownProps extends TimeSinceState {
-    countDownFrom: Duration;
-    onCountdownComplete: () => void;
-}
-
-export const CountdownTimeRenderer = (props: CountdownProps) => (
-    <TimeRenderer {...props} />
-);
-
-export const CountupTimeRenderer = (props: TimeSinceState) => (
-    <TimeRenderer {...props} />
-);
-
-type TimeRendererProps = Partial<CountdownProps>;
-class TimeRenderer extends React.Component<TimeRendererProps, {}> {
+export class CountupTimeRenderer extends React.Component<TimeSinceState, {}> {
     cancel?: number;
     componentDidMount() {
         this.cancel = requestAnimationFrame(this.loop);
@@ -63,11 +49,70 @@ class TimeRenderer extends React.Component<TimeRendererProps, {}> {
                 this.props.lastStoppedAtTimerTime
             );
         }
-        if (this.props.countDownFrom !== undefined) {
-            t = this.props.countDownFrom.clone().subtract(t);
-            if (t.asMilliseconds() < 0) {
-                t = moment.duration(0);
-                this.props.onCountdownComplete && this.props.onCountdownComplete();
+        return (
+            <TimeDisplay>
+                {`${padZeros(t.hours(), 2)}:${padZeros(
+                    t.minutes(),
+                    2
+                )}:${padZeros(t.seconds(), 2)}.${padZeros(
+                    t.milliseconds(),
+                    3
+                )}`}
+            </TimeDisplay>
+        );
+    }
+}
+
+interface CountdownProps extends TimeSinceState {
+    countDownFrom: Duration;
+    onCountdownComplete: () => void;
+}
+
+export class CountdownTimeRenderer extends React.Component<CountdownProps, {}> {
+    cancel?: number;
+    componentDidMount() {
+        this.cancel = requestAnimationFrame(this.loop);
+    }
+    componentWillUnmount() {
+        if (typeof this.cancel === "number") {
+            window.cancelAnimationFrame(this.cancel);
+        }
+    }
+    loop = () => {
+        if (this.props.running) {
+            this.setState({});
+        }
+        this.cancel = requestAnimationFrame(this.loop);
+    };
+    render() {
+        let t;
+        if (
+            !this.props.running &&
+            this.props.lastStoppedAtTimerTime !== undefined
+        ) {
+            t = this.props.countDownFrom
+                .clone()
+                .subtract(this.props.lastStoppedAtTimerTime);
+        } else {
+            t = this.props.countDownFrom
+                .clone()
+                .subtract(
+                    timeSoFar(
+                        this.props.lastStartedAtWallClockTime,
+                        this.props.lastStoppedAtTimerTime
+                    )
+                );
+        }
+        if (t.asMilliseconds() < 0) {
+            t = moment.duration(0);
+            // Note: if we call setState in a parent component to stop running, we don't want to risk calling any callbacks again here - so always check this.props.running.
+            if (this.props.running) {
+                window.setTimeout(
+                    () =>
+                        this.props.onCountdownComplete &&
+                        this.props.onCountdownComplete(),
+                    0
+                );
             }
         }
         return (
