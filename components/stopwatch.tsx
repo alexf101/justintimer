@@ -12,6 +12,7 @@ import { TimeSinceState } from "./shared_interfaces";
 import {
     CountdownTimeRenderer,
     CountupTimeRenderer,
+    TabataTimeRenderer,
     timeSoFar,
 } from "./time_renderer";
 
@@ -164,6 +165,117 @@ const TimeButtonGrid = styled.div`
     max-width: 500px;
 `;
 
+interface TabataState extends TimeSinceState {
+    numberOfRounds: number;
+    exercisesPerRound: number;
+}
+export class Tabata extends React.Component<{}, TabataState> {
+    static get initialState() {
+        return {
+            running: false,
+            lastStoppedAtTimerTime: undefined,
+            lastStartedAtWallClockTime: undefined,
+            numberOfRounds: 8,
+            exercisesPerRound: 3,
+        };
+    }
+    state = Tabata.initialState;
+    static SecondsPerExercise = 20;
+    static SecondsOfRest = 10;
+    start = () => {
+        this.setState({
+            running: true,
+            lastStartedAtWallClockTime: moment(),
+        });
+    };
+    stop = () => {
+        this.setState({
+            running: false,
+            lastStoppedAtTimerTime: timeSoFar(
+                this.state.lastStartedAtWallClockTime,
+                this.state.lastStoppedAtTimerTime
+            ),
+        });
+    };
+    reset = () => {
+        // Clears everything except for setTime
+        this.setState({
+            running: false,
+            lastStoppedAtTimerTime: undefined,
+            lastStartedAtWallClockTime: undefined,
+        });
+    };
+    clear = () => {
+        // Clears everything.
+        this.setState(Tabata.initialState);
+    };
+    render() {
+        return (
+            <StopwatchRoot>
+                <TabataTimeRenderer
+                    onCountdownComplete={() => {
+                        console.log("Timer done!");
+
+                        // Play the sound.
+                        timesUpSound.play();
+                        this.stop();
+                    }}
+                    secondsPerExercise={Tabata.SecondsPerExercise}
+                    secondsOfRest={Tabata.SecondsOfRest}
+                    {...this.state}
+                />
+                {this.state.running || (
+                    <TabataTimeChooser>
+                        <div>
+                            Number of rounds{" "}
+                            <input
+                                type="number"
+                                value={this.state.numberOfRounds}
+                                onChange={(ev) =>
+                                    this.setState({
+                                        numberOfRounds: Number.parseInt(
+                                            ev.currentTarget.value
+                                        ),
+                                    })
+                                }
+                            ></input>
+                        </div>
+                        <div>
+                            Exercises per round{" "}
+                            <input
+                                type="number"
+                                value={this.state.exercisesPerRound}
+                                onChange={(ev) =>
+                                    this.setState({
+                                        exercisesPerRound: Number.parseInt(
+                                            ev.currentTarget.value
+                                        ),
+                                    })
+                                }
+                            ></input>
+                        </div>
+                    </TabataTimeChooser>
+                )}
+                <Controls>
+                    <StartStopButton
+                        running={this.state.running}
+                        onClick={() => {
+                            if (this.state.running) {
+                                this.stop();
+                            } else {
+                                this.start();
+                            }
+                        }}
+                    />
+                    <Button onClick={this.reset}>Reset</Button>
+                </Controls>
+            </StopwatchRoot>
+        );
+    }
+}
+
+const TabataTimeChooser = styled.div``;
+
 export class Stopwatch extends React.Component<{}, TimeSinceState> {
     static get initialState() {
         return {
@@ -237,7 +349,6 @@ const Controls = styled.div`
 
 const StopwatchRoot = styled.div`
     width: 280px;
-    margin: 16px auto;
 `;
 
 const Button = styled.button`

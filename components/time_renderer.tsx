@@ -63,6 +63,78 @@ export class CountupTimeRenderer extends React.Component<TimeSinceState, {}> {
     }
 }
 
+interface TabataProps extends TimeSinceState {
+    onCountdownComplete: () => void;
+    exercisesPerRound: number;
+    numberOfRounds: number;
+    secondsPerExercise: number;
+    secondsOfRest: number;
+}
+
+export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
+    cancel?: number;
+    componentDidMount() {
+        this.cancel = requestAnimationFrame(this.loop);
+    }
+    componentWillUnmount() {
+        if (typeof this.cancel === "number") {
+            window.cancelAnimationFrame(this.cancel);
+        }
+    }
+    loop = () => {
+        if (this.props.running) {
+            this.setState({});
+        }
+        this.cancel = requestAnimationFrame(this.loop);
+    };
+    get countDownFrom(): Duration {
+        return moment.duration(
+            this.props.numberOfRounds *
+                (this.props.secondsPerExercise + this.props.secondsOfRest) *
+                this.props.exercisesPerRound,
+            "seconds"
+        );
+    }
+    render() {
+        let t;
+        if (
+            !this.props.running &&
+            this.props.lastStoppedAtTimerTime !== undefined
+        ) {
+            t = this.countDownFrom.subtract(this.props.lastStoppedAtTimerTime);
+        } else {
+            t = this.countDownFrom.subtract(
+                timeSoFar(
+                    this.props.lastStartedAtWallClockTime,
+                    this.props.lastStoppedAtTimerTime
+                )
+            );
+        }
+        if (t.asMilliseconds() < 0) {
+            t = moment.duration(0);
+            // Note: if we call setState in a parent component to stop running, we don't want to risk calling any callbacks again here - so always check this.props.running.
+            if (this.props.running) {
+                window.setTimeout(
+                    () =>
+                        this.props.onCountdownComplete &&
+                        this.props.onCountdownComplete(),
+                    0
+                );
+            }
+        }
+        const timeStringNoMillis = `${padZeros(t.hours(), 2)}:${padZeros(
+            t.minutes(),
+            2
+        )}:${padZeros(t.seconds(), 2)}`;
+        document.title = timeStringNoMillis;
+        const timeString = `${timeStringNoMillis}.${padZeros(
+            t.milliseconds(),
+            3
+        )}`;
+        return <TimeDisplay>{timeString}</TimeDisplay>;
+    }
+}
+
 interface CountdownProps extends TimeSinceState {
     countDownFrom: Duration;
     onCountdownComplete: () => void;

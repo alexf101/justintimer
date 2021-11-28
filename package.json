@@ -32,5 +32,8 @@
         "esbuild": "^0.13.12",
         "parallel": "^1.2.0",
         "typescript": "^4.4.4"
+    },
+    "prettier": {
+        "tabWidth": 4
     }
 }
