@@ -13,6 +13,11 @@ export function timeSoFar(
     } else {
         timeSinceLastStarted = moment.duration(moment().diff(lastStartedAt));
     }
+    // Uncomment to accelerate time for 'testing'
+    // timeSinceLastStarted
+    //     .add(timeSinceLastStarted)
+    //     .add(timeSinceLastStarted)
+    //     .add(timeSinceLastStarted);
     if (previouslyAccumulated) {
         return timeSinceLastStarted.add(previouslyAccumulated);
     } else {
@@ -95,23 +100,48 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
             "seconds"
         );
     }
+    roundNumber(timeRemaining: Duration): number {
+        return Math.ceil(
+            timeRemaining.asSeconds() /
+                (this.props.secondsPerExercise + this.props.secondsOfRest) /
+                this.props.exercisesPerRound
+        );
+    }
+    exerciseNumber(timeRemaining: Duration): number {
+        const secondsPerRound =
+            (this.props.secondsPerExercise + this.props.secondsOfRest) *
+            this.props.exercisesPerRound;
+        const remainingSecondsThisRound =
+            timeRemaining.asSeconds() -
+            (this.roundNumber(timeRemaining) - 1) * secondsPerRound;
+        return Math.ceil(
+            remainingSecondsThisRound /
+                (this.props.secondsPerExercise + this.props.secondsOfRest)
+        );
+    }
+    isWorkTime(timeRemaining: Duration): boolean {
+        // We want to start with the work interval, which is where the offset of 20 is coming from.
+        return (timeRemaining.seconds() + 20) % 30 < 20;
+    }
     render() {
-        let t;
+        let timeRemaining: Duration;
         if (
             !this.props.running &&
             this.props.lastStoppedAtTimerTime !== undefined
         ) {
-            t = this.countDownFrom.subtract(this.props.lastStoppedAtTimerTime);
+            timeRemaining = this.countDownFrom.subtract(
+                this.props.lastStoppedAtTimerTime
+            );
         } else {
-            t = this.countDownFrom.subtract(
+            timeRemaining = this.countDownFrom.subtract(
                 timeSoFar(
                     this.props.lastStartedAtWallClockTime,
                     this.props.lastStoppedAtTimerTime
                 )
             );
         }
-        if (t.asMilliseconds() < 0) {
-            t = moment.duration(0);
+        if (timeRemaining.asMilliseconds() < 0) {
+            timeRemaining = moment.duration(0);
             // Note: if we call setState in a parent component to stop running, we don't want to risk calling any callbacks again here - so always check this.props.running.
             if (this.props.running) {
                 window.setTimeout(
@@ -122,16 +152,26 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
                 );
             }
         }
-        const timeStringNoMillis = `${padZeros(t.hours(), 2)}:${padZeros(
-            t.minutes(),
+        const timeStringNoMillis = `${padZeros(
+            timeRemaining.hours(),
             2
-        )}:${padZeros(t.seconds(), 2)}`;
+        )}:${padZeros(timeRemaining.minutes(), 2)}:${padZeros(
+            timeRemaining.seconds(),
+            2
+        )}`;
         document.title = timeStringNoMillis;
         const timeString = `${timeStringNoMillis}.${padZeros(
-            t.milliseconds(),
+            timeRemaining.milliseconds(),
             3
         )}`;
-        return <TimeDisplay>{timeString}</TimeDisplay>;
+        return (
+            <div>
+                <TimeDisplay>{timeString}</TimeDisplay>
+                Round {this.roundNumber(timeRemaining)}
+                Exercise {this.exerciseNumber(timeRemaining)}
+                {this.isWorkTime(timeRemaining) ? "WORK" : "REST"}
+            </div>
+        );
     }
 }
 
