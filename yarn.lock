@@ -497,6 +497,11 @@ orderedmap@^1.1.0:
   resolved "https://registry.yarnpkg.com/orderedmap/-/orderedmap-1.1.1.tgz#c618e77611b3b21d0fe3edc92586265e0059c789"
   integrity sha512-3Ux8um0zXbVacKUkcytc0u3HgC0b0bBLT+I60r2J/En72cI0nZffqrA7Xtf2Hqs27j1g82llR5Mhbd0Z1XW4AQ==
 
+parallel@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/parallel/-/parallel-1.2.0.tgz#1917f1cb1a76269a4f059d55e1839e5fbff6c297"
+  integrity sha1-GRfxyxp2JppPBZ1V4YOeX7/2wpc=
+
 postcss-value-parser@^4.0.2:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/postcss-value-parser/-/postcss-value-parser-4.1.0.tgz#443f6a20ced6481a2bda4fa8532a6e55d789a2cb"
