@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "prebuild": "cp src/index.html dist/index.html",
+        "build-static": "cp src/index.html assets/* dist/",
         "build": "esbuild app.tsx --target=es2015 --bundle --sourcemap --outfile=dist/justintimer.js",
         "check": "yarn run tsc --noEmit",
         "bc": "parallel -- 'yarn run build --watch' 'yarn run check --watch' 'python -m SimpleHTTPServer'"

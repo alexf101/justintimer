@@ -17,6 +17,9 @@ const TimerChooser = () => {
 };
 const TimerNavBar = styled.div`
     margin: 8px auto;
+    display: flex;
+    justify-content: space-between;
+    width: 300px;
 `;
 
 type pages = "stopwatch" | "timer" | "tabata" | "unknown";

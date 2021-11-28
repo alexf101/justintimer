@@ -70,6 +70,8 @@ export class CountupTimeRenderer extends React.Component<TimeSinceState, {}> {
 
 interface TabataProps extends TimeSinceState {
     onCountdownComplete: () => void;
+    onWork: () => void;
+    onRest: () => void;
     exercisesPerRound: number;
     numberOfRounds: number;
     secondsPerExercise: number;
@@ -78,6 +80,7 @@ interface TabataProps extends TimeSinceState {
 
 export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
     cancel?: number;
+    justOnceAtTheStart = false;
     componentDidMount() {
         this.cancel = requestAnimationFrame(this.loop);
     }
@@ -114,9 +117,14 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
         const remainingSecondsThisRound =
             timeRemaining.asSeconds() -
             (this.roundNumber(timeRemaining) - 1) * secondsPerRound;
-        return Math.ceil(
-            remainingSecondsThisRound /
-                (this.props.secondsPerExercise + this.props.secondsOfRest)
+        // We want to count *up* on exercises per round
+        return (
+            1 +
+            this.props.exercisesPerRound -
+            Math.ceil(
+                remainingSecondsThisRound /
+                    (this.props.secondsPerExercise + this.props.secondsOfRest)
+            )
         );
     }
     isWorkTime(timeRemaining: Duration): boolean {
@@ -164,16 +172,53 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
             timeRemaining.milliseconds(),
             3
         )}`;
+        if (this.props.running && !this.justOnceAtTheStart) {
+            this.justOnceAtTheStart = true;
+            this.props.onWork();
+        })
         return (
             <div>
                 <TimeDisplay>{timeString}</TimeDisplay>
-                Round {this.roundNumber(timeRemaining)}
-                Exercise {this.exerciseNumber(timeRemaining)}
-                {this.isWorkTime(timeRemaining) ? "WORK" : "REST"}
+                <div>Round {this.roundNumber(timeRemaining)}</div>
+                <div>Exercise {this.exerciseNumber(timeRemaining)}</div>
+                <WorkRestDisplay
+                    isWorkTime={this.isWorkTime(timeRemaining)}
+                    onWork={this.props.onWork}
+                    onRest={this.props.onRest}
+                />
             </div>
         );
     }
 }
+
+interface WorkRestDisplayProps {
+    isWorkTime: boolean;
+    onWork: () => void;
+    onRest: () => void;
+}
+class WorkRestDisplay extends React.Component<WorkRestDisplayProps> {
+    componentDidUpdate(prevProps: WorkRestDisplayProps) {
+        if (this.props.isWorkTime !== prevProps.isWorkTime) {
+            if (this.props.isWorkTime) {
+                this.props.onWork();
+            } else {
+                this.props.onRest();
+            }
+        }
+    }
+    render() {
+        return (
+            <WorkRestDisplayRoot
+                bgColor={this.props.isWorkTime ? "green" : "red"}
+            >
+                {this.props.isWorkTime ? "Work" : "Rest"}
+            </WorkRestDisplayRoot>
+        );
+    }
+}
+const WorkRestDisplayRoot = styled.div<{ bgColor: string }>`
+    background-color: ${(props) => props.bgColor};
+`;
 
 interface CountdownProps extends TimeSinceState {
     countDownFrom: Duration;

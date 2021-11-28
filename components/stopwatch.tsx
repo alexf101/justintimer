@@ -3,10 +3,12 @@ import React from "react";
 import styled from "styled-components";
 import { Howl } from "howler";
 
-// Setup the new Howl.
+// Setup our audio.
 const timesUpSound = new Howl({
     src: ["./timer-done.mp3"],
 });
+const workSound = new Howl({src: ["./work.mp3"]})
+const restSound = new Howl({src: ["./rest.mp3"]})
 
 import { TimeSinceState } from "./shared_interfaces";
 import {
@@ -80,65 +82,6 @@ export class Timer extends React.Component<{}, TimerState> {
                     countDownFrom={this.state.setTime}
                     {...this.state}
                 />
-                <TimeButtonGrid>
-                    <AddTimeButton
-                        onClick={makeTimeIncrementer(
-                            moment.duration(1, "seconds")
-                        )}
-                    >
-                        +1s
-                    </AddTimeButton>
-                    <AddTimeButton
-                        onClick={makeTimeIncrementer(
-                            moment.duration(5, "seconds")
-                        )}
-                    >
-                        +5s
-                    </AddTimeButton>
-                    <AddTimeButton
-                        onClick={makeTimeIncrementer(
-                            moment.duration(10, "seconds")
-                        )}
-                    >
-                        +10s
-                    </AddTimeButton>
-                    <AddTimeButton
-                        onClick={makeTimeIncrementer(
-                            moment.duration(20, "seconds")
-                        )}
-                    >
-                        +20s
-                    </AddTimeButton>
-                    <AddTimeButton
-                        onClick={makeTimeIncrementer(
-                            moment.duration(30, "seconds")
-                        )}
-                    >
-                        +30s
-                    </AddTimeButton>
-                    <AddTimeButton
-                        onClick={makeTimeIncrementer(
-                            moment.duration(1, "minute")
-                        )}
-                    >
-                        +1m
-                    </AddTimeButton>
-                    <AddTimeButton
-                        onClick={makeTimeIncrementer(
-                            moment.duration(2, "minutes")
-                        )}
-                    >
-                        +2m
-                    </AddTimeButton>
-                    <AddTimeButton
-                        onClick={makeTimeIncrementer(
-                            moment.duration(5, "minutes")
-                        )}
-                    >
-                        +5m
-                    </AddTimeButton>
-                    <Button onClick={this.clear}>Clear</Button>
-                </TimeButtonGrid>
                 <Controls>
                     <StartStopButton
                         running={this.state.running}
@@ -152,6 +95,67 @@ export class Timer extends React.Component<{}, TimerState> {
                     />
                     <Button onClick={this.reset}>Reset</Button>
                 </Controls>
+                {this.state.running || (
+                    <TimeButtonGrid>
+                        <AddTimeButton
+                            onClick={makeTimeIncrementer(
+                                moment.duration(1, "seconds")
+                            )}
+                        >
+                            +1s
+                        </AddTimeButton>
+                        <AddTimeButton
+                            onClick={makeTimeIncrementer(
+                                moment.duration(5, "seconds")
+                            )}
+                        >
+                            +5s
+                        </AddTimeButton>
+                        <AddTimeButton
+                            onClick={makeTimeIncrementer(
+                                moment.duration(10, "seconds")
+                            )}
+                        >
+                            +10s
+                        </AddTimeButton>
+                        <AddTimeButton
+                            onClick={makeTimeIncrementer(
+                                moment.duration(20, "seconds")
+                            )}
+                        >
+                            +20s
+                        </AddTimeButton>
+                        <AddTimeButton
+                            onClick={makeTimeIncrementer(
+                                moment.duration(30, "seconds")
+                            )}
+                        >
+                            +30s
+                        </AddTimeButton>
+                        <AddTimeButton
+                            onClick={makeTimeIncrementer(
+                                moment.duration(1, "minute")
+                            )}
+                        >
+                            +1m
+                        </AddTimeButton>
+                        <AddTimeButton
+                            onClick={makeTimeIncrementer(
+                                moment.duration(2, "minutes")
+                            )}
+                        >
+                            +2m
+                        </AddTimeButton>
+                        <AddTimeButton
+                            onClick={makeTimeIncrementer(
+                                moment.duration(5, "minutes")
+                            )}
+                        >
+                            +5m
+                        </AddTimeButton>
+                        <Button onClick={this.clear}>Clear</Button>
+                    </TimeButtonGrid>
+                )}
             </StopwatchRoot>
         );
     }
@@ -222,8 +226,29 @@ export class Tabata extends React.Component<{}, TabataState> {
                     }}
                     secondsPerExercise={Tabata.SecondsPerExercise}
                     secondsOfRest={Tabata.SecondsOfRest}
+                    onWork={() => {
+                        console.log("Work start.");
+                        workSound.play();
+                    }}
+                    onRest={() => {
+                        console.log("Rest start.");
+                        restSound.play();
+                    }}
                     {...this.state}
                 />
+                <Controls>
+                    <StartStopButton
+                        running={this.state.running}
+                        onClick={() => {
+                            if (this.state.running) {
+                                this.stop();
+                            } else {
+                                this.start();
+                            }
+                        }}
+                    />
+                    <Button onClick={this.reset}>Reset</Button>
+                </Controls>
                 {this.state.running || (
                     <TabataTimeChooser>
                         <div>
@@ -256,19 +281,6 @@ export class Tabata extends React.Component<{}, TabataState> {
                         </div>
                     </TabataTimeChooser>
                 )}
-                <Controls>
-                    <StartStopButton
-                        running={this.state.running}
-                        onClick={() => {
-                            if (this.state.running) {
-                                this.stop();
-                            } else {
-                                this.start();
-                            }
-                        }}
-                    />
-                    <Button onClick={this.reset}>Reset</Button>
-                </Controls>
             </StopwatchRoot>
         );
     }
