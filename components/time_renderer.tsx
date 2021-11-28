@@ -115,17 +115,16 @@ export class CountdownTimeRenderer extends React.Component<CountdownProps, {}> {
                 );
             }
         }
-        return (
-            <TimeDisplay>
-                {`${padZeros(t.hours(), 2)}:${padZeros(
-                    t.minutes(),
-                    2
-                )}:${padZeros(t.seconds(), 2)}.${padZeros(
-                    t.milliseconds(),
-                    3
-                )}`}
-            </TimeDisplay>
-        );
+        const timeStringNoMillis = `${padZeros(t.hours(), 2)}:${padZeros(
+            t.minutes(),
+            2
+        )}:${padZeros(t.seconds(), 2)}`;
+        document.title = timeStringNoMillis;
+        const timeString = `${timeStringNoMillis}.${padZeros(
+            t.milliseconds(),
+            3
+        )}`;
+        return <TimeDisplay>{timeString}</TimeDisplay>;
     }
 }
 

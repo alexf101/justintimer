@@ -2,7 +2,7 @@
     "scripts": {
         "build": "esbuild app.tsx --target=es2015 --bundle --sourcemap --outfile=dist/justintimer.js",
         "check": "yarn run tsc --noEmit",
-        "bc": "parallel -- 'yarn run build --watch' 'yarn run check --watch'"
+        "bc": "parallel -- 'yarn run build --watch' 'yarn run check --watch' 'python -m SimpleHTTPServer'"
     },
     "dependencies": {
         "@types/howler": "^2.2.4",
