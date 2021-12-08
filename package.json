@@ -1,9 +1,13 @@
 {
     "scripts": {
         "build-static": "cp src/index.html assets/* dist/",
-        "build": "esbuild app.tsx --target=es2015 --bundle --sourcemap --outfile=dist/justintimer.js",
+        "watch-static": "fswatch src/index.html assets/* | xargs -n1 -I{} yarn run build-static",
+        "build-js-dev": "esbuild src/app.tsx --target=es2015 --bundle --sourcemap --outfile=dist/justintimer.js",
+        "build-js-prod": "esbuild src/app.tsx --target=es2015 --bundle --minify --tree-shaking=true --outfile=dist/justintimer.js",
         "check": "yarn run tsc --noEmit",
-        "bc": "parallel -- 'yarn run build --watch' 'yarn run check --watch' 'python -m SimpleHTTPServer'"
+        "watch": "parallel -- 'yarn run check --watch' 'yarn run watch-static' 'yarn run build-js-dev --servedir=dist'",
+        "build-all": "rm -rf dist/*; yarn run build-static; yarn run build-js-prod",
+        "deploy": "rsync --progress --delete -r dist/ justintimer.net:~/justintimer.net/public"
     },
     "dependencies": {
         "@types/howler": "^2.2.4",

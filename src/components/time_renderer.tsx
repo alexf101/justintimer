@@ -14,10 +14,10 @@ export function timeSoFar(
         timeSinceLastStarted = moment.duration(moment().diff(lastStartedAt));
     }
     // Uncomment to accelerate time for 'testing'
-    // timeSinceLastStarted
-    //     .add(timeSinceLastStarted)
-    //     .add(timeSinceLastStarted)
-    //     .add(timeSinceLastStarted);
+    timeSinceLastStarted
+        .add(timeSinceLastStarted)
+        .add(timeSinceLastStarted)
+        .add(timeSinceLastStarted);
     if (previouslyAccumulated) {
         return timeSinceLastStarted.add(previouslyAccumulated);
     } else {
@@ -175,12 +175,20 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
         if (this.props.running && !this.justOnceAtTheStart) {
             this.justOnceAtTheStart = true;
             this.props.onWork();
-        })
+        }
         return (
             <div>
                 <TimeDisplay>{timeString}</TimeDisplay>
-                <div>Round {this.roundNumber(timeRemaining)}</div>
-                <div>Exercise {this.exerciseNumber(timeRemaining)}</div>
+                <SideBySide>
+                    <div>Exercise {this.exerciseNumber(timeRemaining)}</div>
+                    <div>
+                        Round{" "}
+                        {1 +
+                            this.props.numberOfRounds -
+                            this.roundNumber(timeRemaining)}{" "}
+                        of {this.props.numberOfRounds}
+                    </div>
+                </SideBySide>
                 <WorkRestDisplay
                     isWorkTime={this.isWorkTime(timeRemaining)}
                     onWork={this.props.onWork}
@@ -190,6 +198,15 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
         );
     }
 }
+
+const SideBySide = styled.div`
+    display: flex;
+    direction: row;
+    justify-content: space-between;
+    padding: 16px 4px;
+    font-size: larger;
+    font-family: sans-serif;
+`;
 
 interface WorkRestDisplayProps {
     isWorkTime: boolean;
@@ -208,16 +225,21 @@ class WorkRestDisplay extends React.Component<WorkRestDisplayProps> {
     }
     render() {
         return (
-            <WorkRestDisplayRoot
-                bgColor={this.props.isWorkTime ? "green" : "red"}
-            >
+            <WorkRestDisplayRoot workTime={this.props.isWorkTime}>
                 {this.props.isWorkTime ? "Work" : "Rest"}
             </WorkRestDisplayRoot>
         );
     }
 }
-const WorkRestDisplayRoot = styled.div<{ bgColor: string }>`
-    background-color: ${(props) => props.bgColor};
+const WorkRestDisplayRoot = styled.div<{ workTime: boolean }>`
+    background-color: ${(props) => (props.workTime ? "green" : "red")};
+    color: ${(props) => (props.workTime ? "black" : "white")};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    font-size: 2rem;
+    font-family: sans-serif;
 `;
 
 interface CountdownProps extends TimeSinceState {

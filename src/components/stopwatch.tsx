@@ -7,8 +7,8 @@ import { Howl } from "howler";
 const timesUpSound = new Howl({
     src: ["./timer-done.mp3"],
 });
-const workSound = new Howl({src: ["./work.mp3"]})
-const restSound = new Howl({src: ["./rest.mp3"]})
+const workSound = new Howl({ src: ["./work.mp3"] });
+const restSound = new Howl({ src: ["./rest.mp3"] });
 
 import { TimeSinceState } from "./shared_interfaces";
 import {
@@ -352,7 +352,7 @@ const StartStopButton = ({
 const Controls = styled.div`
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
     > * {
         flex: 1 0 0;
         max-width: 100px;
@@ -361,6 +361,9 @@ const Controls = styled.div`
 
 const StopwatchRoot = styled.div`
     width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 `;
 
 const Button = styled.button`

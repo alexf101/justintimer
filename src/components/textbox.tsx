@@ -55,7 +55,6 @@ export const Textbox = () => {
 const EditorWrapper = styled.div`
     margin: 0 auto;
     width: 560px;
-    padding: 8px;
     border-radius: 8px;
     border: 2px solid gray;
     font-size: 20px;
@@ -63,5 +62,7 @@ const EditorWrapper = styled.div`
     .ProseMirror {
         height: 360px;
         overflow: auto;
+        padding: 0 12px;
+        font-family: sans-serif;
     }
 `;
