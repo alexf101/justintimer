@@ -54,7 +54,7 @@ export const Textbox = () => {
 
 const EditorWrapper = styled.div`
     margin: 0 auto;
-    width: 560px;
+    width: 453px;
     border-radius: 8px;
     border: 2px solid gray;
     font-size: 20px;

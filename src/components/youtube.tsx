@@ -1,6 +1,27 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
+const videosList = [
+    ["Royalty Free Workout Music", "https://www.youtube.com/embed/vsNVCvp_j7A"],
+    ["Beer with Duncan", "https://www.youtube.com/watch?v=hOML9zwoZn0"],
+    [
+        "Harder Better Faster Stronger",
+        "https://www.youtube.com/watch?v=gAjR4_CbPpQ",
+    ],
+    ["Thunderstruck", "https://www.youtube.com/watch?v=v2AC41dglnM"],
+    ["Roxanne", "https://www.youtube.com/watch?v=3T1c7GkzRQQ"],
+    ["Believer", "https://www.youtube.com/watch?v=7wtfhZwyrcc"],
+    ["Moral of the Story", "https://www.youtube.com/watch?v=0M1L15hpphQ"],
+    ["Sexy and I Know It", "https://www.youtube.com/watch?v=26oIRMdH9AQ"],
+    ["Unstoppable", "https://www.youtube.com/watch?v=h3h035Eyz5A"],
+    ["Shake It Off", "https://www.youtube.com/watch?v=nfWlot6h_JM"],
+    ["Wes Anderson", "https://www.youtube.com/watch?v=oAQNnd7QIkk"],
+    ["Panic Station", "https://www.youtube.com/watch?v=vk24UKKI4yY"],
+    ["This Year", "https://www.youtube.com/watch?v=ii6kJaGiRaI"],
+    ["Don't Stop Me Now", "https://www.youtube.com/watch?v=HgzGwKwLmgM"],
+    ["Killer Queen", "https://www.youtube.com/watch?v=2ZBtPf7FOoM"],
+];
+
 export const YouTube = () => {
     const [videoId, setVideoId] = useState(
         "https://www.youtube.com/embed/vsNVCvp_j7A"
@@ -44,6 +65,9 @@ export const YouTube = () => {
                     onChange={(ev) => setVideoId(ev.target.value)}
                 />
             </UrlWrapper>
+            {videosList.map(([title, url]) => (
+                <button onClick={() => setVideoId(url)}>{title}</button>
+            ))}
         </YouTubeWrapper>
     );
 };

@@ -102,56 +102,63 @@ export class Timer extends React.Component<{}, TimerState> {
                                 moment.duration(1, "seconds")
                             )}
                         >
-                            +1s
+                            1s
                         </AddTimeButton>
                         <AddTimeButton
                             onClick={makeTimeIncrementer(
                                 moment.duration(5, "seconds")
                             )}
                         >
-                            +5s
+                            5s
                         </AddTimeButton>
                         <AddTimeButton
                             onClick={makeTimeIncrementer(
                                 moment.duration(10, "seconds")
                             )}
                         >
-                            +10s
+                            10s
                         </AddTimeButton>
                         <AddTimeButton
                             onClick={makeTimeIncrementer(
                                 moment.duration(20, "seconds")
                             )}
                         >
-                            +20s
+                            20s
                         </AddTimeButton>
                         <AddTimeButton
                             onClick={makeTimeIncrementer(
                                 moment.duration(30, "seconds")
                             )}
                         >
-                            +30s
+                            30s
                         </AddTimeButton>
                         <AddTimeButton
                             onClick={makeTimeIncrementer(
                                 moment.duration(1, "minute")
                             )}
                         >
-                            +1m
+                            1m
                         </AddTimeButton>
                         <AddTimeButton
                             onClick={makeTimeIncrementer(
                                 moment.duration(2, "minutes")
                             )}
                         >
-                            +2m
+                            2m
                         </AddTimeButton>
                         <AddTimeButton
                             onClick={makeTimeIncrementer(
                                 moment.duration(5, "minutes")
                             )}
                         >
-                            +5m
+                            5m
+                        </AddTimeButton>
+                        <AddTimeButton
+                            onClick={makeTimeIncrementer(
+                                moment.duration(10, "minutes")
+                            )}
+                        >
+                            10m
                         </AddTimeButton>
                         <Button onClick={this.clear}>Clear</Button>
                     </TimeButtonGrid>
@@ -266,7 +273,7 @@ export class Tabata extends React.Component<{}, TabataState> {
                             ></input>
                         </div>
                         <div>
-                            Exercises per round{" "}
+                            Stations per round{" "}
                             <input
                                 type="number"
                                 value={this.state.exercisesPerRound}

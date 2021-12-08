@@ -34,6 +34,19 @@ function pageSelect(choices: { [K in pages]: React.ReactNode }) {
     return (choices as any)[page];
 }
 
+const Jokes = () => {
+    return (
+        <div>
+            <a
+                target="_blank"
+                href="https://kidadl.com/articles/terrible-puns-that-are-so-bad-theyre-good"
+            >
+                Terrible puns
+            </a>
+        </div>
+    );
+};
+
 const App = () => {
     const [page, setPage] = useState("");
     useEffect(() => {
@@ -56,6 +69,9 @@ const App = () => {
             </PaddedCenteredContainer>
             <Textbox />
             <YouTube />
+            <PaddedCenteredContainer>
+                <Jokes />
+            </PaddedCenteredContainer>
         </div>
     );
 };
