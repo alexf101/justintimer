@@ -359,7 +359,7 @@ const StartStopButton = ({
 const Controls = styled.div`
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-around;
     > * {
         flex: 1 0 0;
         max-width: 100px;
@@ -367,7 +367,7 @@ const Controls = styled.div`
 `;
 
 const StopwatchRoot = styled.div`
-    width: 280px;
+    width: 560px;
     display: flex;
     flex-direction: column;
     gap: 16px;

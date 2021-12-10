@@ -14,10 +14,10 @@ export function timeSoFar(
         timeSinceLastStarted = moment.duration(moment().diff(lastStartedAt));
     }
     // Uncomment to accelerate time for 'testing'
-    timeSinceLastStarted
-        .add(timeSinceLastStarted)
-        .add(timeSinceLastStarted)
-        .add(timeSinceLastStarted);
+    // timeSinceLastStarted
+    //     .add(timeSinceLastStarted)
+    //     .add(timeSinceLastStarted)
+    //     .add(timeSinceLastStarted);
     if (previouslyAccumulated) {
         return timeSinceLastStarted.add(previouslyAccumulated);
     } else {
@@ -59,10 +59,11 @@ export class CountupTimeRenderer extends React.Component<TimeSinceState, {}> {
                 {`${padZeros(t.hours(), 2)}:${padZeros(
                     t.minutes(),
                     2
-                )}:${padZeros(t.seconds(), 2)}.${padZeros(
+                )}:${padZeros(t.seconds(), 2)}`}
+                <MillisDisplay>{`${padZeros(
                     t.milliseconds(),
                     3
-                )}`}
+                )}`}</MillisDisplay>
             </TimeDisplay>
         );
     }
@@ -313,8 +314,15 @@ function padZeros(input: number, desiredLength: number): string {
     return "0".repeat(padLength) + result;
 }
 
+const MillisDisplay = styled.div`
+    font-size: 16px;
+    position: absolute;
+    bottom: -8px;
+    right: 0;
+`;
 const TimeDisplay = styled.div`
-    font-size: 26px;
+    position: relative;
+    font-size: 80px;
     font-weight: bold;
     font-family: monospace;
     margin: 12px auto;

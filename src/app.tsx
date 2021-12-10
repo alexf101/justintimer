@@ -60,14 +60,16 @@ const App = () => {
                 <TimerChooser />
             </PaddedCenteredContainer>
             <PaddedCenteredContainer>
-                {pageSelect({
-                    timer: <Timer />,
-                    stopwatch: <Stopwatch />,
-                    tabata: <Tabata />,
-                    unknown: "not found",
-                })}
+                <Wrap>
+                    {pageSelect({
+                        timer: <Timer />,
+                        stopwatch: <Stopwatch />,
+                        tabata: <Tabata />,
+                        unknown: "not found",
+                    })}
+                    <Textbox />
+                </Wrap>
             </PaddedCenteredContainer>
-            <Textbox />
             <YouTube />
             <PaddedCenteredContainer>
                 <Jokes />
@@ -75,6 +77,14 @@ const App = () => {
         </div>
     );
 };
+
+const Wrap = styled.div`
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 32px;
+`;
 
 const PaddedCenteredContainer = styled.div`
     display: flex;
