@@ -54,16 +54,16 @@ export class CountupTimeRenderer extends React.Component<TimeSinceState, {}> {
                 this.props.lastStoppedAtTimerTime
             );
         }
+        const timeStringNoMillis = `${padZeros(t.hours(), 2)}:${padZeros(
+            t.minutes(),
+            2
+        )}:${padZeros(t.seconds(), 2)}`;
+        document.title = timeStringNoMillis;
+        const timeStringMillis = `${padZeros(t.milliseconds(), 3)}`;
         return (
             <TimeDisplay>
-                {`${padZeros(t.hours(), 2)}:${padZeros(
-                    t.minutes(),
-                    2
-                )}:${padZeros(t.seconds(), 2)}`}
-                <MillisDisplay>{`${padZeros(
-                    t.milliseconds(),
-                    3
-                )}`}</MillisDisplay>
+                {timeStringNoMillis}
+                <MillisDisplay>{timeStringMillis}</MillisDisplay>
             </TimeDisplay>
         );
     }
@@ -169,17 +169,17 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
             2
         )}`;
         document.title = timeStringNoMillis;
-        const timeString = `${timeStringNoMillis}.${padZeros(
-            timeRemaining.milliseconds(),
-            3
-        )}`;
+        const timeStringMillis = `${padZeros(timeRemaining.milliseconds(), 3)}`;
         if (this.props.running && !this.justOnceAtTheStart) {
             this.justOnceAtTheStart = true;
             this.props.onWork();
         }
         return (
             <div>
-                <TimeDisplay>{timeString}</TimeDisplay>
+                <TimeDisplay>
+                    {timeStringNoMillis}
+                    <MillisDisplay>{timeStringMillis}</MillisDisplay>
+                </TimeDisplay>
                 <SideBySide>
                     <div>Exercise {this.exerciseNumber(timeRemaining)}</div>
                     <div>
@@ -300,11 +300,13 @@ export class CountdownTimeRenderer extends React.Component<CountdownProps, {}> {
             2
         )}:${padZeros(t.seconds(), 2)}`;
         document.title = timeStringNoMillis;
-        const timeString = `${timeStringNoMillis}.${padZeros(
-            t.milliseconds(),
-            3
-        )}`;
-        return <TimeDisplay>{timeString}</TimeDisplay>;
+        const timeStringMillis = `${padZeros(t.milliseconds(), 3)}`;
+        return (
+            <TimeDisplay>
+                {timeStringNoMillis}
+                <MillisDisplay>{timeStringMillis}</MillisDisplay>
+            </TimeDisplay>
+        );
     }
 }
 
@@ -322,9 +324,10 @@ const MillisDisplay = styled.div`
 `;
 const TimeDisplay = styled.div`
     position: relative;
-    font-size: 80px;
+    font-size: 100px;
     font-weight: bold;
     font-family: monospace;
     margin: 12px auto;
     text-align: center;
+    width: fit-content;
 `;
