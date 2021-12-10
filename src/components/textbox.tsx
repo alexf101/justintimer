@@ -57,7 +57,7 @@ const EditorWrapper = styled.div`
     width: 453px;
     border-radius: 8px;
     border: 2px solid gray;
-    font-size: 26px;
+    font-size: 1.6rem;
     overflow: hidden;
     .ProseMirror {
         height: 360px;

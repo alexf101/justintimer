@@ -20,6 +20,7 @@ const TimerNavBar = styled.div`
     display: flex;
     justify-content: space-between;
     width: 300px;
+    font-size: 1rem;
 `;
 
 type pages = "stopwatch" | "timer" | "tabata" | "unknown";
