@@ -4,11 +4,13 @@ import styled from "styled-components";
 import { Howl } from "howler";
 
 // Setup our audio.
+// Get new audio from https://ttsmp3.com/ US English/Salli.
 const timesUpSound = new Howl({
-    src: ["./timer-done.mp3"],
+    src: ["./timer_done.mp3"],
 });
 const workSound = new Howl({ src: ["./work.mp3"] });
 const restSound = new Howl({ src: ["./rest.mp3"] });
+const workoutComplete = new Howl({ src: ["./workout_complete.mp3"] });
 
 import { TimeSinceState } from "./shared_interfaces";
 import {
@@ -228,7 +230,7 @@ export class Tabata extends React.Component<{}, TabataState> {
                         console.log("Timer done!");
 
                         // Play the sound.
-                        timesUpSound.play();
+                        workoutComplete.play();
                         this.stop();
                     }}
                     secondsPerExercise={Tabata.SecondsPerExercise}

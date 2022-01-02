@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Stopwatch, Tabata, Timer } from "./components/stopwatch";
 import { Textbox } from "./components/textbox";
 import { YouTube } from "./components/youtube";
+import { Howl } from "howler";
 
 const TimerChooser = () => {
     return (
@@ -35,18 +36,26 @@ function pageSelect(choices: { [K in pages]: React.ReactNode }) {
     return (choices as any)[page];
 }
 
+const escapePodSound = new Howl({ src: ["./escape_hatch.mp3"] });
 const Jokes = () => {
     return (
-        <div>
+        <JokeContainer>
             <a
                 target="_blank"
                 href="https://kidadl.com/articles/terrible-puns-that-are-so-bad-theyre-good"
             >
                 Terrible puns
             </a>
-        </div>
+            <button onClick={() => escapePodSound.play()}>
+                Launch escape pod
+            </button>
+        </JokeContainer>
     );
 };
+const JokeContainer = styled.div`
+    display: flex;
+    gap: 16px;
+`;
 
 const App = () => {
     const [page, setPage] = useState("");

@@ -25,21 +25,27 @@ export function timeSoFar(
     }
 }
 
+function updateDocumentTitle(newTitle: string) {
+    if (document.title !== newTitle) {
+        document.title = newTitle;
+    }
+}
+
 export class CountupTimeRenderer extends React.Component<TimeSinceState, {}> {
     cancel?: number;
     componentDidMount() {
-        this.cancel = requestAnimationFrame(this.loop);
+        this.cancel = raf(this.loop);
     }
     componentWillUnmount() {
         if (typeof this.cancel === "number") {
-            window.cancelAnimationFrame(this.cancel);
+            caf(this.cancel);
         }
     }
     loop = () => {
         if (this.props.running) {
             this.setState({});
         }
-        this.cancel = requestAnimationFrame(this.loop);
+        this.cancel = raf(this.loop);
     };
     render() {
         let t;
@@ -58,7 +64,7 @@ export class CountupTimeRenderer extends React.Component<TimeSinceState, {}> {
             t.minutes(),
             2
         )}:${padZeros(t.seconds(), 2)}`;
-        document.title = timeStringNoMillis;
+        updateDocumentTitle(timeStringNoMillis);
         const timeStringMillis = `${padZeros(t.milliseconds(), 3)}`;
         return (
             <TimeDisplay>
@@ -83,18 +89,18 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
     cancel?: number;
     justOnceAtTheStart = false;
     componentDidMount() {
-        this.cancel = requestAnimationFrame(this.loop);
+        this.cancel = raf(this.loop);
     }
     componentWillUnmount() {
         if (typeof this.cancel === "number") {
-            window.cancelAnimationFrame(this.cancel);
+            caf(this.cancel);
         }
     }
     loop = () => {
         if (this.props.running) {
             this.setState({});
         }
-        this.cancel = requestAnimationFrame(this.loop);
+        this.cancel = raf(this.loop);
     };
     get countDownFrom(): Duration {
         return moment.duration(
@@ -168,7 +174,7 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
             timeRemaining.seconds(),
             2
         )}`;
-        document.title = timeStringNoMillis;
+        updateDocumentTitle(timeStringNoMillis);
         const timeStringMillis = `${padZeros(timeRemaining.milliseconds(), 3)}`;
         if (this.props.running && !this.justOnceAtTheStart) {
             this.justOnceAtTheStart = true;
@@ -248,21 +254,32 @@ interface CountdownProps extends TimeSinceState {
     onCountdownComplete: () => void;
 }
 
+// I used to use requestAnimationFrame for this, but it doesn't run on background tabs, which is an important use case here - i.e., the timer sound must play if the time runs out and the document title must be updated even on background tabs.
+function raf(callback: TimerHandler) {
+    // TODO if it proves necessary:
+    // - an implementation that acts more like raf
+    // - a sleepy mode for background tabs, e.g. set interval to 100 instead of 16.
+    return setTimeout(callback, 16);
+}
+function caf(timer: number) {
+    clearTimeout(timer);
+}
+
 export class CountdownTimeRenderer extends React.Component<CountdownProps, {}> {
     cancel?: number;
     componentDidMount() {
-        this.cancel = requestAnimationFrame(this.loop);
+        this.cancel = raf(this.loop);
     }
     componentWillUnmount() {
         if (typeof this.cancel === "number") {
-            window.cancelAnimationFrame(this.cancel);
+            caf(this.cancel);
         }
     }
     loop = () => {
         if (this.props.running) {
             this.setState({});
         }
-        this.cancel = requestAnimationFrame(this.loop);
+        this.cancel = raf(this.loop);
     };
     render() {
         let t;
@@ -299,7 +316,7 @@ export class CountdownTimeRenderer extends React.Component<CountdownProps, {}> {
             t.minutes(),
             2
         )}:${padZeros(t.seconds(), 2)}`;
-        document.title = timeStringNoMillis;
+        updateDocumentTitle(timeStringNoMillis);
         const timeStringMillis = `${padZeros(t.milliseconds(), 3)}`;
         return (
             <TimeDisplay>
