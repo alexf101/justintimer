@@ -1,7 +1,7 @@
 {
     "scripts": {
         "build-static": "cp src/index.html assets/* dist/",
-        "watch-static": "fswatch src/index.html assets/* | xargs -n1 -I{} yarn run build-static",
+        "watch-static": "yarn run build-static; fswatch src/index.html assets/* | xargs -n1 -I{} yarn run build-static",
         "build-js-dev": "esbuild src/app.tsx --target=es2015 --bundle --sourcemap --outfile=dist/justintimer.js",
         "build-js-prod": "esbuild src/app.tsx --target=es2015 --bundle --minify --tree-shaking=true --outfile=dist/justintimer.js",
         "check": "yarn run tsc --noEmit",
