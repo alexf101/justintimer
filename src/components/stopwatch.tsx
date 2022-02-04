@@ -136,6 +136,13 @@ export class Timer extends React.Component<{}, TimerState> {
                         </AddTimeButton>
                         <AddTimeButton
                             onClick={makeTimeIncrementer(
+                                moment.duration(45, "seconds")
+                            )}
+                        >
+                            45s
+                        </AddTimeButton>
+                        <AddTimeButton
+                            onClick={makeTimeIncrementer(
                                 moment.duration(1, "minute")
                             )}
                         >
