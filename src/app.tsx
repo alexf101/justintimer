@@ -2,7 +2,6 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import * as ReactDOM from "react-dom";
 import styled from "styled-components";
-// import { Stopwatch, Tabata, Timer } from "./components/stopwatch";
 import { Stopwatch } from "./pages/stopwatch";
 import { Tabata } from "./pages/tabata";
 import { Timer } from "./pages/timer";

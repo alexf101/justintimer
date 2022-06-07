@@ -92,7 +92,7 @@ export class Tabata extends React.Component<{}, TabataState> {
                             }
                         }}
                     />
-                    <Button onClick={this.reset}>Reset</Button>
+                    <Button color="#efefef" onClick={this.reset}>Reset</Button>
                 </RowDisplayWithEvenSpacing>
                 {this.state.running || (
                     <TabataTimeChooser>

@@ -9,13 +9,17 @@ export const StartStopButton = ({
     onClick: () => void;
 }) => {
     const text = running ? "Stop" : "Start";
-    return <Button onClick={onClick}>{text}</Button>;
+    return <Button color={running ? "#f00" : "#0edb0e"} onClick={onClick}>{text}</Button>;
 };
 
-export const Button = styled.button`
+interface Props {
+    color?: string;
+}
+export const Button = styled.button<Props>`
     padding: 4px;
     border-radius: 4px;
     font-size: 20px;
+    background: ${props => props.color ? props.color : "white"}
 `;
 
 export const ClearButton = Button;

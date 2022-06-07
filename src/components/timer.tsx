@@ -61,6 +61,7 @@ export class Timer extends React.Component<{}, TimerState> {
                     };
                 });
         };
+        const whitespace = " ";
         return (
             <SingleColumnDisplay>
                 <CountdownTimeRenderer
@@ -85,7 +86,7 @@ export class Timer extends React.Component<{}, TimerState> {
                             }
                         }}
                     />
-                    <Button onClick={this.reset}>Reset</Button>
+                    <Button color="#efefef" onClick={this.reset}>Reset</Button>
                 </RowDisplayWithEvenSpacing>
                 {this.state.running || (
                     <TimeButtonGrid>
@@ -94,65 +95,65 @@ export class Timer extends React.Component<{}, TimerState> {
                                 moment.duration(1, "seconds")
                             )}
                         >
-                            1s
+                            1{whitespace}s
                         </AddTimeButton>
                         <AddTimeButton
                             onClick={makeTimeIncrementer(
                                 moment.duration(5, "seconds")
                             )}
                         >
-                            5s
+                            5{whitespace}s
                         </AddTimeButton>
                         <AddTimeButton
                             onClick={makeTimeIncrementer(
                                 moment.duration(10, "seconds")
                             )}
                         >
-                            10s
+                            10{whitespace}s
                         </AddTimeButton>
                         <AddTimeButton
                             onClick={makeTimeIncrementer(
                                 moment.duration(20, "seconds")
                             )}
                         >
-                            20s
+                            20{whitespace}s
                         </AddTimeButton>
                         <AddTimeButton
                             onClick={makeTimeIncrementer(
                                 moment.duration(30, "seconds")
                             )}
                         >
-                            30s
+                            30{whitespace}s
                         </AddTimeButton>
                         <AddTimeButton
                             onClick={makeTimeIncrementer(
                                 moment.duration(1, "minute")
                             )}
                         >
-                            1m
+                            1{whitespace}m
                         </AddTimeButton>
                         <AddTimeButton
                             onClick={makeTimeIncrementer(
                                 moment.duration(2, "minutes")
                             )}
                         >
-                            2m
+                            2{whitespace}m
                         </AddTimeButton>
                         <AddTimeButton
                             onClick={makeTimeIncrementer(
                                 moment.duration(5, "minutes")
                             )}
                         >
-                            5m
+                            5{whitespace}m
                         </AddTimeButton>
                         <AddTimeButton
                             onClick={makeTimeIncrementer(
                                 moment.duration(10, "minutes")
                             )}
                         >
-                            10m
+                            10{whitespace}m
                         </AddTimeButton>
-                        <Button onClick={this.clear}>Clear</Button>
+                        <ClearButton onClick={this.clear}>Clear</ClearButton>
                     </TimeButtonGrid>
                 )}
             </SingleColumnDisplay>
@@ -160,12 +161,29 @@ export class Timer extends React.Component<{}, TimerState> {
     }
 }
 
-const AddTimeButton = styled.button``;
+
+const BluishButtonStyles = `
+    background: #87cefa9c;
+    box-shadow: inset 0px 0px 2px lightgrey;
+    border-radius: 4px;
+    &:hover {
+        background: #87cefa;
+    }
+`
+
+const AddTimeButton = styled.button`
+    ${BluishButtonStyles}
+    font-size: 20px;
+    width: 3.23em;
+    height: 2em;
+    margin: 4px;
+`;
 
 const TimeButtonGrid = styled.div`
     display: grid;
     grid-template-columns: auto auto auto;
-    max-width: 500px;
+    width: fit-content;
+    margin: auto;
 `;
 
 
@@ -181,3 +199,10 @@ const Button = styled.button`
     border-radius: 4px;
     font-size: 20px;
 `;
+
+const ClearButton = styled(Button)`
+    ${BluishButtonStyles}
+    grid-row: 4;
+    grid-column: span 3;
+    margin: 4px;
+`

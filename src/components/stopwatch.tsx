@@ -50,6 +50,7 @@ export class Stopwatch extends React.Component<{}, TimeSinceState> {
                     />
                     <Button
                         onClick={() => this.setState(Stopwatch.initialState)}
+                        color="#efefef"
                     >
                         Reset
                     </Button>
