@@ -2,16 +2,20 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import * as ReactDOM from "react-dom";
 import styled from "styled-components";
-import { Stopwatch, Tabata, Timer } from "./components/stopwatch";
-import { Textbox } from "./components/textbox";
-import { YouTube } from "./components/youtube";
+// import { Stopwatch, Tabata, Timer } from "./components/stopwatch";
+import { Stopwatch } from "./pages/stopwatch";
+import { Tabata } from "./pages/tabata";
+import { Timer } from "./pages/timer";
 import { Howl } from "howler";
+import { DualTimer } from "./pages/dual-timer";
+import { PaddedCenteredContainer } from "./components/shared_ui";
 
 const TimerChooser = () => {
     return (
         <TimerNavBar>
             <a href="#stopwatch">Stopwatch</a>
             <a href="#timer">Timer</a>
+            <a href="#dual-timers">Dual timers</a>
             <a href="#tabata">Tabata</a>
         </TimerNavBar>
     );
@@ -24,7 +28,7 @@ const TimerNavBar = styled.div`
     font-size: 1rem;
 `;
 
-type pages = "stopwatch" | "timer" | "tabata" | "unknown";
+type pages = "stopwatch" | "timer" | "tabata" | "dual-timers" | "unknown";
 function pageSelect(choices: { [K in pages]: React.ReactNode }) {
     let page = window.location.hash.substring(1);
     if (!page || page === "") {
@@ -69,37 +73,18 @@ const App = () => {
             <PaddedCenteredContainer>
                 <TimerChooser />
             </PaddedCenteredContainer>
-            <PaddedCenteredContainer>
-                <Wrap>
-                    {pageSelect({
+            {pageSelect({
                         timer: <Timer />,
                         stopwatch: <Stopwatch />,
+                "dual-timers": <DualTimer />,
                         tabata: <Tabata />,
                         unknown: "not found",
-                    })}
-                    <Textbox />
-                </Wrap>
-            </PaddedCenteredContainer>
-            <YouTube />
+            })}
             <PaddedCenteredContainer>
                 <Jokes />
             </PaddedCenteredContainer>
         </div>
     );
 };
-
-const Wrap = styled.div`
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    gap: 32px;
-`;
-
-const PaddedCenteredContainer = styled.div`
-    display: flex;
-    justify-content: center;
-    padding: 16px;
-`;
 
 ReactDOM.render(<App />, document.getElementById("react"));

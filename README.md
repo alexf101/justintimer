@@ -6,7 +6,6 @@ Helpful screen to share if you're a personal trainer conducting a remote workout
 
 If you're on Mac, please make sure you have the following utilities installed:
 
-    parallel
     fswatch
     rsync
 
@@ -26,3 +25,13 @@ The following will compile all the relevant code into the `dist` directory.
     yarn run deploy
 
 To deploy, just copy that directory to any HTTP static file server.
+
+
+## Feature requests:
+
+- Configurable Tabata timer intervals
+- Dual timers
+- Free duration entry on timer
+- Hush for Tabata
+- Logo (blocked on getting a photo of JT's old logo)
+- Music timers (for dance practice)

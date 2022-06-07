@@ -5,7 +5,7 @@
         "build-js-dev": "esbuild src/app.tsx --target=es2015 --bundle --sourcemap --outfile=dist/justintimer.js",
         "build-js-prod": "esbuild src/app.tsx --target=es2015 --bundle --minify --tree-shaking=true --outfile=dist/justintimer.js",
         "check": "yarn run tsc --noEmit",
-        "watch": "parallel -- 'yarn run check --watch' 'yarn run watch-static' 'yarn run build-js-dev --servedir=dist'",
+        "watch": "yarn run concurrently 'yarn run check --watch' 'yarn run watch-static' 'yarn run build-js-dev --servedir=dist'",
         "build-all": "rm -rf dist/*; yarn run build-static; yarn run build-js-prod",
         "deploy": "rsync --progress --delete -r dist/ justintimer.net:~/justintimer.net/public"
     },
@@ -33,8 +33,8 @@
         "@types/react": "^17.0.33",
         "@types/react-dom": "^17.0.10",
         "@types/styled-components": "^5.1.15",
+        "concurrently": "^7.2.1",
         "esbuild": "^0.13.12",
-        "parallel": "^1.2.0",
         "typescript": "^4.4.4"
     },
     "prettier": {
