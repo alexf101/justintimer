@@ -135,8 +135,8 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
         );
     }
     isWorkTime(timeRemaining: Duration): boolean {
-        // We want to start with the work interval, which is where the offset of 20 is coming from.
-        return (timeRemaining.seconds() + 20) % 30 < 20;
+        // We want to start with the work interval.
+        return (timeRemaining.seconds() + this.props.secondsPerExercise) % (this.props.secondsPerExercise + this.props.secondsOfRest) < this.props.secondsPerExercise;
     }
     render() {
         let timeRemaining: Duration;

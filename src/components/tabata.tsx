@@ -17,6 +17,8 @@ import {
 interface TabataState extends TimeSinceState {
     numberOfRounds: number;
     exercisesPerRound: number;
+    workTime: number;
+    restTime: number;
 }
 export class Tabata extends React.Component<{}, TabataState> {
     static get initialState() {
@@ -26,11 +28,11 @@ export class Tabata extends React.Component<{}, TabataState> {
             lastStartedAtWallClockTime: undefined,
             numberOfRounds: 8,
             exercisesPerRound: 3,
+            workTime: 20,
+            restTime: 10,
         };
     }
     state = Tabata.initialState;
-    static SecondsPerExercise = 20;
-    static SecondsOfRest = 10;
     start = () => {
         this.setState({
             running: true,
@@ -69,8 +71,8 @@ export class Tabata extends React.Component<{}, TabataState> {
                         workoutComplete.play();
                         this.stop();
                     }}
-                    secondsPerExercise={Tabata.SecondsPerExercise}
-                    secondsOfRest={Tabata.SecondsOfRest}
+                    secondsPerExercise={this.state.workTime}
+                    secondsOfRest={this.state.restTime}
                     onWork={() => {
                         console.log("Work start.");
                         workSound.play();
@@ -96,7 +98,7 @@ export class Tabata extends React.Component<{}, TabataState> {
                 </RowDisplayWithEvenSpacing>
                 {this.state.running || (
                     <TabataTimeChooser>
-                        <div>
+                        <InputRow>
                             Number of rounds{" "}
                             <input
                                 type="number"
@@ -109,8 +111,8 @@ export class Tabata extends React.Component<{}, TabataState> {
                                     })
                                 }
                             ></input>
-                        </div>
-                        <div>
+                        </InputRow>
+                        <InputRow>
                             Stations per round{" "}
                             <input
                                 type="number"
@@ -123,7 +125,35 @@ export class Tabata extends React.Component<{}, TabataState> {
                                     })
                                 }
                             ></input>
-                        </div>
+                        </InputRow>
+                        <InputRow>
+                            Work time (seconds){" "}
+                            <input
+                                type="number"
+                                value={this.state.workTime}
+                                onChange={(ev) =>
+                                    this.setState({
+                                        workTime: Number.parseInt(
+                                            ev.currentTarget.value
+                                        ),
+                                    })
+                                }
+                            ></input>
+                        </InputRow>
+                        <InputRow>
+                            Rest time (seconds){" "}
+                            <input
+                                type="number"
+                                value={this.state.restTime}
+                                onChange={(ev) =>
+                                    this.setState({
+                                        restTime: Number.parseInt(
+                                            ev.currentTarget.value
+                                        ),
+                                    })
+                                }
+                            ></input>
+                        </InputRow>
                     </TabataTimeChooser>
                 )}
             </SingleColumnDisplay>
@@ -132,3 +162,7 @@ export class Tabata extends React.Component<{}, TabataState> {
 }
 
 const TabataTimeChooser = styled.div``;
+
+const InputRow = styled.div`
+    line-height: 2em;
+`
