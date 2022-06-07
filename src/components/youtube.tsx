@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import styled from "styled-components";
 
@@ -46,16 +47,18 @@ export const YouTube = () => {
     if (!videoUrl) {
         videoUrl = "https://www.youtube.com/embed/" + videoId;
     }
+    let iframe: HTMLIFrameElement | null;
     return (
         <YouTubeWrapper>
             <iframe
                 width="560"
                 height="315"
-                src={videoUrl}
+                src={videoUrl + "?enablejsapi=1"}
                 title="YouTube video player"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
+                ref={el => { iframe = el }}
             ></iframe>
             <UrlWrapper>
                 Video URL:
@@ -65,6 +68,35 @@ export const YouTube = () => {
                     onChange={(ev) => setVideoId(ev.target.value)}
                 />
             </UrlWrapper>
+            {/* Inspired by https://github.com/nsrau/react-youtube-iframe/blob/main/src/index.tsx
+            <button onClick={() => {
+                iframe?.contentWindow?.postMessage(JSON.stringify({
+                    'event': 'command',
+                    'func': "playVideo",
+                    'args': []
+                }), "*")
+            }}>Play</button>
+            <button onClick={() => {
+                iframe?.contentWindow?.postMessage(JSON.stringify({
+                    'event': 'command',
+                    'func': "pauseVideo",
+                    'args': []
+                }), "*")
+            }}>Pause</button>
+            <button onClick={() => {
+                iframe?.contentWindow?.postMessage(JSON.stringify({
+                    'event': 'command',
+                    'func': "setVolume",
+                    'args': [20]
+                }), "*")
+            }}>20</button>
+            <button onClick={() => {
+                iframe?.contentWindow?.postMessage(JSON.stringify({
+                    'event': 'command',
+                    'func': "setVolume",
+                    'args': [60]
+                }), "*")
+            }}>60</button> */}
             {videosList.map(([title, url]) => (
                 <button onClick={() => setVideoId(url)}>{title}</button>
             ))}
