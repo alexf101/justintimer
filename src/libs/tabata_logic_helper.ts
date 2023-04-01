@@ -77,8 +77,6 @@ export class TabataLogicHelper {
                 secondsTotal = workAt;
             }
         }
-        console.log("secondsTotal: ", secondsTotal); // XX
-        console.log("this.rounds: ", JSON.stringify(this.rounds, null, 2)); // XX
         return secondsTotal;
     }
 

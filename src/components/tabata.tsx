@@ -15,12 +15,21 @@ import {
 
 import { TimeSinceState } from "./shared_interfaces";
 import { TabataTimeRenderer, timeSoFar } from "./time_renderer";
+import { globalYoutubeController } from "libs/youtube_global_controls";
 
 interface TabataState extends TimeSinceState {
     numberOfRounds: number;
     exercisesPerRound: number;
     workTime: number;
     restTime: number;
+}
+function hushPlay(sound: Howl) {
+    globalYoutubeController.hush();
+    setTimeout(() => sound.play(), 200);
+    setTimeout(
+        () => globalYoutubeController.unhush(),
+        sound.duration() * 1000 + 400
+    );
 }
 export class Tabata extends React.Component<{}, TabataState> {
     static get initialState() {
@@ -69,19 +78,18 @@ export class Tabata extends React.Component<{}, TabataState> {
                     onCountdownComplete={() => {
                         console.log("Timer done!");
 
-                        // Play the sound.
-                        workoutComplete.play();
+                        hushPlay(workoutComplete);
                         this.stop();
                     }}
                     secondsPerExercise={this.state.workTime}
                     secondsOfRest={this.state.restTime}
                     onWork={() => {
                         console.log("Work start.");
-                        workSound.play();
+                        hushPlay(workSound);
                     }}
                     onRest={() => {
                         console.log("Rest start.");
-                        restSound.play();
+                        hushPlay(restSound);
                     }}
                     {...this.state}
                 />

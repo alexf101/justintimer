@@ -1,3 +1,4 @@
+import { globalYoutubeController } from "libs/youtube_global_controls";
 import React, { useState } from "react";
 import styled from "styled-components";
 
@@ -59,6 +60,7 @@ export const YouTube = () => {
                 allowFullScreen
                 ref={(el) => {
                     iframe = el;
+                    globalYoutubeController.configure(iframe);
                 }}
             ></iframe>
             <UrlWrapper>
@@ -69,35 +71,6 @@ export const YouTube = () => {
                     onChange={(ev) => setVideoId(ev.target.value)}
                 />
             </UrlWrapper>
-            {/* Inspired by https://github.com/nsrau/react-youtube-iframe/blob/main/src/index.tsx
-            <button onClick={() => {
-                iframe?.contentWindow?.postMessage(JSON.stringify({
-                    'event': 'command',
-                    'func': "playVideo",
-                    'args': []
-                }), "*")
-            }}>Play</button>
-            <button onClick={() => {
-                iframe?.contentWindow?.postMessage(JSON.stringify({
-                    'event': 'command',
-                    'func': "pauseVideo",
-                    'args': []
-                }), "*")
-            }}>Pause</button>
-            <button onClick={() => {
-                iframe?.contentWindow?.postMessage(JSON.stringify({
-                    'event': 'command',
-                    'func': "setVolume",
-                    'args': [20]
-                }), "*")
-            }}>20</button>
-            <button onClick={() => {
-                iframe?.contentWindow?.postMessage(JSON.stringify({
-                    'event': 'command',
-                    'func': "setVolume",
-                    'args': [60]
-                }), "*")
-            }}>60</button> */}
             {videosList.map(([title, url]) => (
                 <button onClick={() => setVideoId(url)}>{title}</button>
             ))}
