@@ -8,7 +8,7 @@ export type TabataState = "work" | "rest" | "workout_complete";
 
 class Round {
     stateAt(timeSeconds: number): TabataState {
-        if (timeSeconds < this.rest) {
+        if (timeSeconds <= this.rest) {
             return "rest";
         } else {
             return "work";
@@ -67,12 +67,15 @@ export class TabataLogicHelper {
 
     roundAt(timeSeconds: number): Round {
         // The round begins with work
-        return this.rounds.flat().find((time) => timeSeconds < time.work)!;
+        return this.rounds.flat().find((time) => timeSeconds <= time.work)!;
     }
 
     stateAt(timeSeconds: number): TabataState {
         if (timeSeconds > this.secondsTotal) {
             return "rest";
+        }
+        if (timeSeconds === 0) {
+            return "workout_complete";
         }
         console.log("this.roundAt(timeSeconds): ", this.roundAt(timeSeconds).toJSON());  // XX
         return this.roundAt(timeSeconds).stateAt(timeSeconds);
