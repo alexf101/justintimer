@@ -6,6 +6,7 @@
         "build-js-prod": "esbuild src/app.tsx --target=es2015 --bundle --minify --tree-shaking=true --outfile=dist/justintimer.js",
         "check": "yarn run tsc --noEmit",
         "watch": "yarn run concurrently 'yarn run check --watch' 'yarn run watch-static' 'yarn run build-js-dev --servedir=dist'",
+        "test": "NODE_PATH=src jest",
         "build-all": "rm -rf dist/*; yarn run build-static; yarn run build-js-prod",
         "deploy": "rsync --progress --delete -r dist/ justintimer.net:~/justintimer.net/public"
     },
@@ -35,6 +36,9 @@
         "@types/styled-components": "^5.1.15",
         "concurrently": "^7.2.1",
         "esbuild": "^0.13.12",
+        "jest": "^29.5.0",
+        "jest-environment-jsdom": "^29.5.0",
+        "ts-jest": "^29.0.5",
         "typescript": "^4.4.4"
     },
     "prettier": {

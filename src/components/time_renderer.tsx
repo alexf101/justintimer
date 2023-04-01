@@ -1,6 +1,7 @@
 import moment, { Duration, Moment } from "moment";
 import React from "react";
 import styled from "styled-components";
+import { TabataConfig } from "../libs/tabata_logic_helper";
 import { TimeSinceState } from "./shared_interfaces";
 
 export function timeSoFar(
@@ -75,16 +76,17 @@ export class CountupTimeRenderer extends React.Component<TimeSinceState, {}> {
     }
 }
 
-interface TabataProps extends TimeSinceState {
+type TabataProps = TimeSinceState & TabataConfig & {
     onCountdownComplete: () => void;
     onWork: () => void;
     onRest: () => void;
-    exercisesPerRound: number;
-    numberOfRounds: number;
-    secondsPerExercise: number;
-    secondsOfRest: number;
 }
 
+// I used to do this all with maths, but that got complicated and buggy.
+// Instead, we make the logic feel similar to the desired interface:
+// - Construct an array of time slots for work and rest
+// - Choose the appropriate time slot based on the current time.
+// - Transitions from one to the other trigger the voice indicator.
 export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
     cancel?: number;
     justOnceAtTheStart = false;
