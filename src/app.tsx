@@ -73,11 +73,11 @@ const App = () => {
                 <TimerChooser />
             </PaddedCenteredContainer>
             {pageSelect({
-                        timer: <Timer />,
-                        stopwatch: <Stopwatch />,
+                timer: <Timer />,
+                stopwatch: <Stopwatch />,
                 "dual-timers": <DualTimer />,
-                        tabata: <Tabata />,
-                        unknown: "not found",
+                tabata: <Tabata />,
+                unknown: "not found",
             })}
             <PaddedCenteredContainer>
                 <Jokes />
