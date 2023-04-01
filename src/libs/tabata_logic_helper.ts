@@ -3,7 +3,7 @@ export type TabataConfig = {
     numberOfRounds: number;
     secondsPerExercise: number;
     secondsOfRest: number;
-}
+};
 export type TabataState = "work" | "rest" | "workout_complete";
 
 class Round {
@@ -18,7 +18,12 @@ class Round {
             return "work";
         }
     }
-    constructor(rest: number, work: number, roundNumber: number, exerciseNumber: number) {
+    constructor(
+        rest: number,
+        work: number,
+        roundNumber: number,
+        exerciseNumber: number
+    ) {
         this.rest = rest;
         this.work = work;
         this.roundNumber = roundNumber;
@@ -53,16 +58,27 @@ export class TabataLogicHelper {
 
     setUp() {
         let secondsTotal = 0;
-        for (let round=0; round<this.numberOfRounds; round+=1) {
-            for (let exercise=0; exercise<this.exercisesPerRound; exercise+=1) {
+        for (let round = 0; round < this.numberOfRounds; round += 1) {
+            for (
+                let exercise = 0;
+                exercise < this.exercisesPerRound;
+                exercise += 1
+            ) {
                 let restAt = secondsTotal + this.secondsOfRest;
                 let workAt = restAt + this.secondsPerExercise;
-                this.rounds.push(new Round(restAt, workAt, this.numberOfRounds - round, this.exercisesPerRound - exercise));
+                this.rounds.push(
+                    new Round(
+                        restAt,
+                        workAt,
+                        this.numberOfRounds - round,
+                        this.exercisesPerRound - exercise
+                    )
+                );
                 secondsTotal = workAt;
             }
         }
-        console.log("secondsTotal: ", secondsTotal);  // XX
-        console.log("this.rounds: ", JSON.stringify(this.rounds, null, 2));  // XX
+        console.log("secondsTotal: ", secondsTotal); // XX
+        console.log("this.rounds: ", JSON.stringify(this.rounds, null, 2)); // XX
         return secondsTotal;
     }
 
@@ -73,7 +89,7 @@ export class TabataLogicHelper {
     roundAt(timeSeconds: number): Round {
         // The round begins with work
         if (this.rounds.length === 0) {
-            return new Round(0,0,0,0);
+            return new Round(0, 0, 0, 0);
         }
         if (timeSeconds > this.secondsTotal) {
             return this.rounds[this.rounds.length - 1];
@@ -95,5 +111,7 @@ export class TabataLogicHelper {
     }
 }
 export function formatTime(time: number) {
-    return `${Math.floor(time / 60)}:${(time % 60).toString().padStart(2, '0')}`;
+    return `${Math.floor(time / 60)}:${(time % 60)
+        .toString()
+        .padStart(2, "0")}`;
 }

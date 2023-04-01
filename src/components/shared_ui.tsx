@@ -9,7 +9,11 @@ export const StartStopButton = ({
     onClick: () => void;
 }) => {
     const text = running ? "Stop" : "Start";
-    return <Button color={running ? "#f00" : "#0edb0e"} onClick={onClick}>{text}</Button>;
+    return (
+        <Button color={running ? "#f00" : "#0edb0e"} onClick={onClick}>
+            {text}
+        </Button>
+    );
 };
 
 interface Props {
@@ -19,7 +23,7 @@ export const Button = styled.button<Props>`
     padding: 4px;
     border-radius: 4px;
     font-size: 20px;
-    background: ${props => props.color ? props.color : "white"}
+    background: ${(props) => (props.color ? props.color : "white")};
 `;
 
 export const ClearButton = Button;
@@ -57,4 +61,4 @@ export const PaddedCenteredContainer = styled.div`
 
 export const SideBySide = styled.div`
     display: flex;
-`
+`;

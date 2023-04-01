@@ -1,11 +1,17 @@
 import React from "react";
-import { PaddedCenteredContainer, SideBySide, SingleColumnDisplay, Wrap } from "../components/shared_ui";
+import {
+    PaddedCenteredContainer,
+    SideBySide,
+    SingleColumnDisplay,
+    Wrap,
+} from "../components/shared_ui";
 import { Textbox } from "../components/textbox";
 import { Timer } from "../components/timer";
 export function DualTimer() {
-    return <>
-        <PaddedCenteredContainer>
-            <SideBySide>
+    return (
+        <>
+            <PaddedCenteredContainer>
+                <SideBySide>
                     <SingleColumnDisplay>
                         <Timer />
                         <Textbox />
@@ -14,7 +20,8 @@ export function DualTimer() {
                         <Timer />
                         <Textbox />
                     </SingleColumnDisplay>
-            </SideBySide>
-        </PaddedCenteredContainer>
-    </>
+                </SideBySide>
+            </PaddedCenteredContainer>
+        </>
+    );
 }

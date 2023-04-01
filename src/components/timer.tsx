@@ -2,7 +2,7 @@ import moment, { Duration, Moment } from "moment";
 import React from "react";
 import styled from "styled-components";
 import { TimeSinceState } from "./shared_interfaces";
-import { CountdownTimeRenderer, timeSoFar, } from "./time_renderer";
+import { CountdownTimeRenderer, timeSoFar } from "./time_renderer";
 interface TimerState extends TimeSinceState {
     setTime: Duration;
 }
@@ -86,7 +86,9 @@ export class Timer extends React.Component<{}, TimerState> {
                             }
                         }}
                     />
-                    <Button color="#efefef" onClick={this.reset}>Reset</Button>
+                    <Button color="#efefef" onClick={this.reset}>
+                        Reset
+                    </Button>
                 </RowDisplayWithEvenSpacing>
                 {this.state.running || (
                     <TimeButtonGrid>
@@ -161,7 +163,6 @@ export class Timer extends React.Component<{}, TimerState> {
     }
 }
 
-
 const BluishButtonStyles = `
     background: #87cefa9c;
     box-shadow: inset 0px 0px 2px lightgrey;
@@ -169,7 +170,7 @@ const BluishButtonStyles = `
     &:hover {
         background: #87cefa;
     }
-`
+`;
 
 const AddTimeButton = styled.button`
     ${BluishButtonStyles}
@@ -185,7 +186,6 @@ const TimeButtonGrid = styled.div`
     width: fit-content;
     margin: auto;
 `;
-
 
 const SingleColumnDisplay = styled.div`
     width: 560px;
@@ -205,4 +205,4 @@ const ClearButton = styled(Button)`
     grid-row: 4;
     grid-column: span 3;
     margin: 4px;
-`
+`;

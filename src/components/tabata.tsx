@@ -6,13 +6,15 @@ import { Howl } from "howler";
 const workSound = new Howl({ src: ["./work.mp3"] });
 const restSound = new Howl({ src: ["./rest.mp3"] });
 const workoutComplete = new Howl({ src: ["./workout_complete.mp3"] });
-import { Button, RowDisplayWithEvenSpacing, SingleColumnDisplay, StartStopButton } from "./shared_ui";
+import {
+    Button,
+    RowDisplayWithEvenSpacing,
+    SingleColumnDisplay,
+    StartStopButton,
+} from "./shared_ui";
 
 import { TimeSinceState } from "./shared_interfaces";
-import {
-    TabataTimeRenderer,
-    timeSoFar,
-} from "./time_renderer";
+import { TabataTimeRenderer, timeSoFar } from "./time_renderer";
 
 interface TabataState extends TimeSinceState {
     numberOfRounds: number;
@@ -94,7 +96,9 @@ export class Tabata extends React.Component<{}, TabataState> {
                             }
                         }}
                     />
-                    <Button color="#efefef" onClick={this.reset}>Reset</Button>
+                    <Button color="#efefef" onClick={this.reset}>
+                        Reset
+                    </Button>
                 </RowDisplayWithEvenSpacing>
                 {this.state.running || (
                     <TabataTimeChooser>
@@ -105,9 +109,10 @@ export class Tabata extends React.Component<{}, TabataState> {
                                 value={this.state.numberOfRounds}
                                 onChange={(ev) =>
                                     this.setState({
-                                        numberOfRounds: Number.parseInt(
-                                            ev.currentTarget.value
-                                        ) || 0,
+                                        numberOfRounds:
+                                            Number.parseInt(
+                                                ev.currentTarget.value
+                                            ) || 0,
                                     })
                                 }
                             ></input>
@@ -119,9 +124,10 @@ export class Tabata extends React.Component<{}, TabataState> {
                                 value={this.state.exercisesPerRound}
                                 onChange={(ev) =>
                                     this.setState({
-                                        exercisesPerRound: Number.parseInt(
-                                            ev.currentTarget.value
-                                        ) || 0,
+                                        exercisesPerRound:
+                                            Number.parseInt(
+                                                ev.currentTarget.value
+                                            ) || 0,
                                     })
                                 }
                             ></input>
@@ -133,9 +139,10 @@ export class Tabata extends React.Component<{}, TabataState> {
                                 value={this.state.workTime}
                                 onChange={(ev) =>
                                     this.setState({
-                                        workTime: Number.parseInt(
-                                            ev.currentTarget.value
-                                        ) || 0,
+                                        workTime:
+                                            Number.parseInt(
+                                                ev.currentTarget.value
+                                            ) || 0,
                                     })
                                 }
                             ></input>
@@ -147,9 +154,10 @@ export class Tabata extends React.Component<{}, TabataState> {
                                 value={this.state.restTime}
                                 onChange={(ev) =>
                                     this.setState({
-                                        restTime: Number.parseInt(
-                                            ev.currentTarget.value
-                                        ) || 0,
+                                        restTime:
+                                            Number.parseInt(
+                                                ev.currentTarget.value
+                                            ) || 0,
                                     })
                                 }
                             ></input>
@@ -165,4 +173,4 @@ const TabataTimeChooser = styled.div``;
 
 const InputRow = styled.div`
     line-height: 2em;
-`
+`;

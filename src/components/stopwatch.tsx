@@ -3,11 +3,13 @@ import React from "react";
 import styled from "styled-components";
 
 import { TimeSinceState } from "./shared_interfaces";
-import { Button, RowDisplayWithEvenSpacing, SingleColumnDisplay, StartStopButton } from "./shared_ui";
 import {
-    CountupTimeRenderer,
-    timeSoFar,
-} from "./time_renderer";
+    Button,
+    RowDisplayWithEvenSpacing,
+    SingleColumnDisplay,
+    StartStopButton,
+} from "./shared_ui";
+import { CountupTimeRenderer, timeSoFar } from "./time_renderer";
 
 export class Stopwatch extends React.Component<{}, TimeSinceState> {
     static get initialState() {

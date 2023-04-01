@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import styled from "styled-components";
 
@@ -58,7 +57,9 @@ export const YouTube = () => {
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
-                ref={el => { iframe = el }}
+                ref={(el) => {
+                    iframe = el;
+                }}
             ></iframe>
             <UrlWrapper>
                 Video URL:

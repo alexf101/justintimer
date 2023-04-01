@@ -77,11 +77,12 @@ export class CountupTimeRenderer extends React.Component<TimeSinceState, {}> {
     }
 }
 
-type TabataProps = TimeSinceState & TabataConfig & {
-    onCountdownComplete: () => void;
-    onWork: () => void;
-    onRest: () => void;
-}
+type TabataProps = TimeSinceState &
+    TabataConfig & {
+        onCountdownComplete: () => void;
+        onWork: () => void;
+        onRest: () => void;
+    };
 
 // I used to do this all with maths, but that got complicated and buggy.
 // Instead, we make the logic feel similar to the desired interface:
@@ -116,10 +117,7 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
         this.cancel = raf(this.loop);
     };
     get countDownFrom(): Duration {
-        return moment.duration(
-            this.tabataHelper.secondsTotal,
-            "seconds"
-        );
+        return moment.duration(this.tabataHelper.secondsTotal, "seconds");
     }
     getCurrentRound(timeRemaining: Duration) {
         return this.tabataHelper.roundAt(timeRemaining.asSeconds());
@@ -177,11 +175,13 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
                     <MillisDisplay>{timeStringMillis}</MillisDisplay>
                 </TimeDisplay>
                 <SideBySide>
-                    <div>Exercise {this.getCurrentRound(timeRemaining).exerciseNumber}{" "}
-                        of {this.props.exercisesPerRound}</div>
                     <div>
-                        Round{" "}
-                        {this.getCurrentRound(timeRemaining).roundNumber}{" "}
+                        Exercise{" "}
+                        {this.getCurrentRound(timeRemaining).exerciseNumber} of{" "}
+                        {this.props.exercisesPerRound}
+                    </div>
+                    <div>
+                        Round {this.getCurrentRound(timeRemaining).roundNumber}{" "}
                         of {this.props.numberOfRounds}
                     </div>
                 </SideBySide>
@@ -213,7 +213,10 @@ interface WorkRestDisplayProps {
 }
 class WorkRestDisplay extends React.Component<WorkRestDisplayProps> {
     componentDidUpdate(prevProps: WorkRestDisplayProps) {
-        if (this.props.isRunning && (this.props.isWorkTime !== prevProps.isWorkTime)) {
+        if (
+            this.props.isRunning &&
+            this.props.isWorkTime !== prevProps.isWorkTime
+        ) {
             if (this.props.isWorkTime) {
                 this.props.onWork();
             } else {
