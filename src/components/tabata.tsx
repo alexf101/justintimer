@@ -107,7 +107,7 @@ export class Tabata extends React.Component<{}, TabataState> {
                                     this.setState({
                                         numberOfRounds: Number.parseInt(
                                             ev.currentTarget.value
-                                        ),
+                                        ) || 0,
                                     })
                                 }
                             ></input>
@@ -121,7 +121,7 @@ export class Tabata extends React.Component<{}, TabataState> {
                                     this.setState({
                                         exercisesPerRound: Number.parseInt(
                                             ev.currentTarget.value
-                                        ),
+                                        ) || 0,
                                     })
                                 }
                             ></input>
@@ -135,7 +135,7 @@ export class Tabata extends React.Component<{}, TabataState> {
                                     this.setState({
                                         workTime: Number.parseInt(
                                             ev.currentTarget.value
-                                        ),
+                                        ) || 0,
                                     })
                                 }
                             ></input>
@@ -149,7 +149,7 @@ export class Tabata extends React.Component<{}, TabataState> {
                                     this.setState({
                                         restTime: Number.parseInt(
                                             ev.currentTarget.value
-                                        ),
+                                        ) || 0,
                                     })
                                 }
                             ></input>

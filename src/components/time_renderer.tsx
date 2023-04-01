@@ -1,7 +1,8 @@
+import { isEqual } from "lodash";
 import moment, { Duration, Moment } from "moment";
 import React from "react";
 import styled from "styled-components";
-import { TabataConfig } from "../libs/tabata_logic_helper";
+import { TabataConfig, TabataLogicHelper } from "../libs/tabata_logic_helper";
 import { TimeSinceState } from "./shared_interfaces";
 
 export function timeSoFar(
@@ -90,6 +91,16 @@ type TabataProps = TimeSinceState & TabataConfig & {
 export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
     cancel?: number;
     justOnceAtTheStart = false;
+    tabataHelper: TabataLogicHelper;
+    constructor(props: TabataProps) {
+        super(props);
+        this.tabataHelper = new TabataLogicHelper(props);
+    }
+    componentDidUpdate(prevProps: TabataProps) {
+        if (!isEqual(prevProps, this.props)) {
+            this.tabataHelper = new TabataLogicHelper(this.props);
+        }
+    }
     componentDidMount() {
         this.cancel = raf(this.loop);
     }
@@ -106,39 +117,16 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
     };
     get countDownFrom(): Duration {
         return moment.duration(
-            this.props.numberOfRounds *
-                (this.props.secondsPerExercise + this.props.secondsOfRest) *
-                this.props.exercisesPerRound,
+            this.tabataHelper.secondsTotal,
             "seconds"
         );
     }
-    roundNumber(timeRemaining: Duration): number {
-        return Math.ceil(
-            timeRemaining.asSeconds() /
-                (this.props.secondsPerExercise + this.props.secondsOfRest) /
-                this.props.exercisesPerRound
-        );
-    }
-    exerciseNumber(timeRemaining: Duration): number {
-        const secondsPerRound =
-            (this.props.secondsPerExercise + this.props.secondsOfRest) *
-            this.props.exercisesPerRound;
-        const remainingSecondsThisRound =
-            timeRemaining.asSeconds() -
-            (this.roundNumber(timeRemaining) - 1) * secondsPerRound;
-        // We want to count *up* on exercises per round
-        return (
-            1 +
-            this.props.exercisesPerRound -
-            Math.ceil(
-                remainingSecondsThisRound /
-                    (this.props.secondsPerExercise + this.props.secondsOfRest)
-            )
-        );
+    getCurrentRound(timeRemaining: Duration) {
+        return this.tabataHelper.roundAt(timeRemaining.asSeconds());
     }
     isWorkTime(timeRemaining: Duration): boolean {
         // We want to start with the work interval.
-        return (timeRemaining.seconds() + this.props.secondsPerExercise) % (this.props.secondsPerExercise + this.props.secondsOfRest) < this.props.secondsPerExercise;
+        return this.tabataHelper.stateAt(timeRemaining.asSeconds()) === "work";
     }
     render() {
         let timeRemaining: Duration;
@@ -189,16 +177,16 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
                     <MillisDisplay>{timeStringMillis}</MillisDisplay>
                 </TimeDisplay>
                 <SideBySide>
-                    <div>Exercise {this.exerciseNumber(timeRemaining)}</div>
+                    <div>Exercise {this.getCurrentRound(timeRemaining).exerciseNumber}{" "}
+                        of {this.props.exercisesPerRound}</div>
                     <div>
                         Round{" "}
-                        {1 +
-                            this.props.numberOfRounds -
-                            this.roundNumber(timeRemaining)}{" "}
+                        {this.getCurrentRound(timeRemaining).roundNumber}{" "}
                         of {this.props.numberOfRounds}
                     </div>
                 </SideBySide>
                 <WorkRestDisplay
+                    isRunning={this.props.running}
                     isWorkTime={this.isWorkTime(timeRemaining)}
                     onWork={this.props.onWork}
                     onRest={this.props.onRest}
@@ -219,12 +207,13 @@ const SideBySide = styled.div`
 
 interface WorkRestDisplayProps {
     isWorkTime: boolean;
+    isRunning: boolean;
     onWork: () => void;
     onRest: () => void;
 }
 class WorkRestDisplay extends React.Component<WorkRestDisplayProps> {
     componentDidUpdate(prevProps: WorkRestDisplayProps) {
-        if (this.props.isWorkTime !== prevProps.isWorkTime) {
+        if (this.props.isRunning && (this.props.isWorkTime !== prevProps.isWorkTime)) {
             if (this.props.isWorkTime) {
                 this.props.onWork();
             } else {
