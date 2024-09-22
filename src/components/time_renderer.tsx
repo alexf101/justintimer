@@ -16,10 +16,10 @@ export function timeSoFar(
         timeSinceLastStarted = moment.duration(moment().diff(lastStartedAt));
     }
     // Uncomment to accelerate time for 'testing'
-    // timeSinceLastStarted
-    //     .add(timeSinceLastStarted)
-    //     .add(timeSinceLastStarted)
-    //     .add(timeSinceLastStarted);
+    timeSinceLastStarted
+        .add(timeSinceLastStarted)
+        .add(timeSinceLastStarted)
+        .add(timeSinceLastStarted);
     if (previouslyAccumulated) {
         return timeSinceLastStarted.add(previouslyAccumulated);
     } else {
@@ -122,6 +122,9 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
     getCurrentRound(timeRemaining: Duration) {
         return this.tabataHelper.roundAt(timeRemaining.asSeconds());
     }
+    getTimeRemainingInExercise(timeRemaining: Duration) {
+        return this.getCurrentRound(timeRemaining).remainingTimeInState(timeRemaining.asSeconds());
+    }
     isWorkTime(timeRemaining: Duration): boolean {
         // We want to start with the work interval.
         return this.tabataHelper.stateAt(timeRemaining.asSeconds()) === "work";
@@ -170,39 +173,103 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
         }
         return (
             <div>
-                <TimeDisplay>
-                    {timeStringNoMillis}
-                    <MillisDisplay>{timeStringMillis}</MillisDisplay>
-                </TimeDisplay>
-                <SideBySide>
-                    <div>
+                <TabataRow>
+                    <TimeDisplay>
+                        {this.getTimeRemainingInExercise(timeRemaining)}
+                        <MillisDisplay>{timeStringMillis}</MillisDisplay>
+                    </TimeDisplay>
+                </TabataRow>
+                <TabataRow>
+                    <SideBySide>
+                    <ExerciseAndRoundCountContainer>
                         Exercise{" "}
-                        {this.getCurrentRound(timeRemaining).exerciseNumber} of{" "}
+                        <Big>{this.getCurrentRound(timeRemaining).exerciseNumber}</Big>
+                        of{" "}
                         {this.props.exercisesPerRound}
-                    </div>
-                    <div>
-                        Round {this.getCurrentRound(timeRemaining).roundNumber}{" "}
+                    </ExerciseAndRoundCountContainer>
+                    <ExerciseAndRoundCountContainer>
+                        Round <Big>{this.getCurrentRound(timeRemaining).roundNumber}{" "}</Big>
                         of {this.props.numberOfRounds}
-                    </div>
-                </SideBySide>
-                <WorkRestDisplay
-                    isRunning={this.props.running}
-                    isWorkTime={this.isWorkTime(timeRemaining)}
-                    onWork={this.props.onWork}
-                    onRest={this.props.onRest}
-                />
+                    </ExerciseAndRoundCountContainer>
+                    </SideBySide>
+                </TabataRow>
+                <TabataRow>
+                    <ProgressBar>
+                    {Array(this.props.numberOfRounds).fill(null).map(round =>
+                        <ProgressRound completed={round >= (this.props.numberOfRounds - this.getCurrentRound(timeRemaining).roundNumber)}>
+                            {Array(this.props.exercisesPerRound - this.getCurrentRound(timeRemaining).exerciseNumber).fill(null).map(exercise =>
+                                <ProgressExercise completed={exercise >= (this.props.exercisesPerRound - this.getCurrentRound(timeRemaining).exerciseNumber)}/>
+                            )}
+                        </ProgressRound>
+                    )}
+                    </ProgressBar>
+                </TabataRow>
+                <TabataRow>
+                    <WorkRestDisplay
+                        isRunning={this.props.running}
+                        isWorkTime={this.isWorkTime(timeRemaining)}
+                        onWork={this.props.onWork}
+                        onRest={this.props.onRest}
+                    />
+                </TabataRow>
             </div>
         );
     }
 }
 
+const Big = styled.span`font-size: 2em;`;
+
+const ExerciseAndRoundCountContainer = styled.div`
+    display: inline-block;
+    font-size: 1.5em;
+    padding: 8px;
+    width: 50%;
+    text-align: center;
+    border-left: 1px solid black;
+`;
+
+const ProgressBar = styled.div`
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin: 4px;
+    height: 16px;
+    background-color: lightgray;
+    border: 1px solid black;
+`;
+    
+const ProgressRound = styled.div<{completed?: boolean}>`
+    border: 1px solid green;
+    width: 30px;
+    height: 16px;
+    flex-basis: 1em;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    ${completed => completed && "border: none;"}
+`;
+const ProgressExercise = styled.div<{completed?: boolean}>`
+    border: 1px solid grey;
+    background-color: lightblue;
+    width: 10px;
+    height: 16px;
+    flex-basis: 1em;
+    flex-grow: 1;
+    ${completed => completed && "border: none;"}
+`;
+
+const TabataRow = styled.div`
+    display: flex;
+    border: 1px solid black;
+`;
+
 const SideBySide = styled.div`
     display: flex;
     direction: row;
     justify-content: space-between;
-    padding: 16px 4px;
     font-size: larger;
     font-family: sans-serif;
+    width: 100%;
 `;
 
 interface WorkRestDisplayProps {
