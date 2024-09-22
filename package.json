@@ -4,6 +4,7 @@
         "watch-static": "yarn run build-static; fswatch src/index.html assets/* | xargs -n1 -I{} yarn run build-static",
         "build-js-dev": "esbuild src/app.tsx --target=es2015 --bundle --sourcemap --outfile=dist/justintimer.js",
         "build-js-prod": "esbuild src/app.tsx --target=es2015 --bundle --minify --tree-shaking=true --outfile=dist/justintimer.js",
+        "firebase": "firebase",
         "check": "yarn run tsc --noEmit",
         "watch": "yarn run concurrently 'yarn run check --watch' 'yarn run watch-static' 'yarn run build-js-dev --servedir=dist'",
         "test": "NODE_PATH=src jest",
@@ -12,6 +13,8 @@
     },
     "dependencies": {
         "@types/howler": "^2.2.4",
+        "firebase": "^10.13.2",
+        "firebase-tools": "^13.18.0",
         "howler": "^2.2.3",
         "lodash-core": "^4.17.19",
         "moment": "^2.29.1",

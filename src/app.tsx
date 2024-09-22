@@ -9,6 +9,36 @@ import { Howl } from "howler";
 import { DualTimer } from "./pages/dual-timer";
 import { PaddedCenteredContainer } from "./components/shared_ui";
 
+/* This segment is copy/pasted from the Firebase setup.
+
+We're not actually using Firebase for anything other than hosting; however I've dropped this here
+as they suggest during setup in case it becomes useful and to turn on analytics - maybe it'll be interesting?
+*/
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+    apiKey: "AIzaSyBAbgshBlQIHtoD-b7EUlYrW6mkXDUzTGM",
+    authDomain: "justintimer-ecdde.firebaseapp.com",
+    projectId: "justintimer-ecdde",
+    storageBucket: "justintimer-ecdde.appspot.com",
+    messagingSenderId: "935897448070",
+    appId: "1:935897448070:web:a9bc8db7479ce9611fdb07",
+    measurementId: "G-HWTD6R83Z8"
+};
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+/* End copy/pasted Firebase setup */
+
+
 const TimerChooser = () => {
     return (
         <TimerNavBar>
