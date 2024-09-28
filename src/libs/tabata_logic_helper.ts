@@ -100,7 +100,7 @@ export class TabataLogicHelper {
     roundAt(timeSeconds: number): Round {
         // The round begins with work
         if (this.rounds.length === 0) {
-            return new Round(0, 0, 0, 0);
+            return new Round(0, 0, 0, 0, 0);
         }
         if (timeSeconds > this.secondsTotal) {
             return this.rounds[this.rounds.length - 1];

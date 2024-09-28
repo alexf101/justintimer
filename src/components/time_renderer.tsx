@@ -171,37 +171,38 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
             this.justOnceAtTheStart = true;
             this.props.onWork();
         }
+        const seconds = this.getTimeRemainingInExercise(timeRemaining).toFixed(0);
         return (
             <div>
                 <TabataRow>
                     <TimeDisplay>
-                        {this.getTimeRemainingInExercise(timeRemaining)}
+                        {seconds}
                         <MillisDisplay>{timeStringMillis}</MillisDisplay>
                     </TimeDisplay>
                 </TabataRow>
                 <TabataRow>
                     <SideBySide>
-                    <ExerciseAndRoundCountContainer>
-                        Exercise{" "}
-                        <Big>{this.getCurrentRound(timeRemaining).exerciseNumber}</Big>
-                        of{" "}
-                        {this.props.exercisesPerRound}
-                    </ExerciseAndRoundCountContainer>
-                    <ExerciseAndRoundCountContainer>
-                        Round <Big>{this.getCurrentRound(timeRemaining).roundNumber}{" "}</Big>
-                        of {this.props.numberOfRounds}
-                    </ExerciseAndRoundCountContainer>
+                        <ExerciseAndRoundCountContainer>
+                            Round <Big>{this.getCurrentRound(timeRemaining).roundNumber}{" "}</Big>
+                            of {this.props.numberOfRounds}
+                        </ExerciseAndRoundCountContainer>
+                        <ExerciseAndRoundCountContainer>
+                            Exercise{" "}
+                            <Big>{this.getCurrentRound(timeRemaining).exerciseNumber}</Big>
+                            of{" "}
+                            {this.props.exercisesPerRound}
+                        </ExerciseAndRoundCountContainer>
                     </SideBySide>
                 </TabataRow>
                 <TabataRow>
                     <ProgressBar>
-                    {Array(this.props.numberOfRounds).fill(null).map(round =>
-                        <ProgressRound completed={round >= (this.props.numberOfRounds - this.getCurrentRound(timeRemaining).roundNumber)}>
-                            {Array(this.props.exercisesPerRound - this.getCurrentRound(timeRemaining).exerciseNumber).fill(null).map(exercise =>
-                                <ProgressExercise completed={exercise >= (this.props.exercisesPerRound - this.getCurrentRound(timeRemaining).exerciseNumber)}/>
-                            )}
-                        </ProgressRound>
-                    )}
+                        {Array(this.props.numberOfRounds).fill(null).map(round =>
+                            <ProgressRound completed={round >= (this.props.numberOfRounds - this.getCurrentRound(timeRemaining).roundNumber)}>
+                                {Array(this.props.exercisesPerRound - this.getCurrentRound(timeRemaining).exerciseNumber).fill(null).map(exercise =>
+                                    <ProgressExercise completed={exercise >= (this.props.exercisesPerRound - this.getCurrentRound(timeRemaining).exerciseNumber)} />
+                                )}
+                            </ProgressRound>
+                        )}
                     </ProgressBar>
                 </TabataRow>
                 <TabataRow>
@@ -237,8 +238,8 @@ const ProgressBar = styled.div`
     background-color: lightgray;
     border: 1px solid black;
 `;
-    
-const ProgressRound = styled.div<{completed?: boolean}>`
+
+const ProgressRound = styled.div<{ completed?: boolean }>`
     border: 1px solid green;
     width: 30px;
     height: 16px;
@@ -248,7 +249,7 @@ const ProgressRound = styled.div<{completed?: boolean}>`
     flex-direction: row;
     ${completed => completed && "border: none;"}
 `;
-const ProgressExercise = styled.div<{completed?: boolean}>`
+const ProgressExercise = styled.div<{ completed?: boolean }>`
     border: 1px solid grey;
     background-color: lightblue;
     width: 10px;
@@ -308,6 +309,7 @@ const WorkRestDisplayRoot = styled.div<{ workTime: boolean }>`
     padding: 24px;
     font-size: 2rem;
     font-family: sans-serif;
+    width: 100%;
 `;
 
 interface CountdownProps extends TimeSinceState {
