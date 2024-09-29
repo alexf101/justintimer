@@ -4,6 +4,7 @@ import React from "react";
 import styled from "styled-components";
 import { TabataConfig, TabataLogicHelper } from "../libs/tabata_logic_helper";
 import { TimeSinceState } from "./shared_interfaces";
+import * as colors from "libs/colors";
 
 export function timeSoFar(
     lastStartedAt: Moment | undefined,
@@ -175,26 +176,6 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
         return (
             <div>
                 <TabataRow>
-                    <TimeDisplay>
-                        {seconds}
-                        <MillisDisplay>{timeStringMillis}</MillisDisplay>
-                    </TimeDisplay>
-                </TabataRow>
-                <TabataRow>
-                    <SideBySide>
-                        <ExerciseAndRoundCountContainer>
-                            Round <Big>{this.getCurrentRound(timeRemaining).roundNumber}{" "}</Big>
-                            of {this.props.numberOfRounds}
-                        </ExerciseAndRoundCountContainer>
-                        <ExerciseAndRoundCountContainer>
-                            Exercise{" "}
-                            <Big>{this.getCurrentRound(timeRemaining).exerciseNumber}</Big>
-                            of{" "}
-                            {this.props.exercisesPerRound}
-                        </ExerciseAndRoundCountContainer>
-                    </SideBySide>
-                </TabataRow>
-                <TabataRow>
                     <ProgressBar>
                         {Array(this.props.numberOfRounds).fill(null).map((_, round) => {
                             const isCompletedRound = round > (this.props.numberOfRounds - this.getCurrentRound(timeRemaining).roundNumber);
@@ -219,7 +200,27 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
                         onRest={this.props.onRest}
                     />
                 </TabataRow>
-            </div>
+                <TabataRow backgroundColor={(this.props.running || undefined) && (this.isWorkTime(timeRemaining) ? colors.Green : colors.Red)} color={(this.props.running || undefined) && (this.isWorkTime(timeRemaining) ? "black" : "white")}>
+                    <TimeDisplay>
+                        {seconds}
+                        <MillisDisplay>{timeStringMillis}</MillisDisplay>
+                    </TimeDisplay>
+                </TabataRow>
+                <TabataRow>
+                    <SideBySide>
+                        <ExerciseAndRoundCountContainer>
+                            Round <Big>{this.getCurrentRound(timeRemaining).roundNumber}{" "}</Big>
+                            of {this.props.numberOfRounds}
+                        </ExerciseAndRoundCountContainer>
+                        <ExerciseAndRoundCountContainer>
+                            Exercise{" "}
+                            <Big>{this.getCurrentRound(timeRemaining).exerciseNumber}</Big>
+                            of{" "}
+                            {this.props.exercisesPerRound}
+                        </ExerciseAndRoundCountContainer>
+                    </SideBySide>
+                </TabataRow>
+            </div >
         );
     }
 }
@@ -265,9 +266,11 @@ const ProgressExercise = styled.div<{ completed: boolean }>`
     background-color: blue;
 `;
 
-const TabataRow = styled.div`
+const TabataRow = styled.div<{ backgroundColor?: string, color?: string }>`
     display: flex;
     border: 1px solid black;
+    background-color: ${(props) => (props.backgroundColor !== undefined ? props.backgroundColor : "none")};
+    color: ${(props) => (props.color !== undefined ? props.color : "black")};
 `;
 
 const SideBySide = styled.div`
@@ -300,15 +303,15 @@ class WorkRestDisplay extends React.Component<WorkRestDisplayProps> {
     }
     render() {
         return (
-            <WorkRestDisplayRoot workTime={this.props.isWorkTime}>
+            <WorkRestDisplayRoot backgroundColor={(this.props.isRunning || undefined) && (this.props.isWorkTime ? colors.Green : colors.Red)} color={(this.props.isRunning || undefined) && (this.props.isWorkTime ? "black" : "white")}>
                 {this.props.isWorkTime ? "Work" : "Rest"}
             </WorkRestDisplayRoot>
         );
     }
 }
-const WorkRestDisplayRoot = styled.div<{ workTime: boolean }>`
-    background-color: ${(props) => (props.workTime ? "green" : "red")};
-    color: ${(props) => (props.workTime ? "black" : "white")};
+const WorkRestDisplayRoot = styled.div<{ backgroundColor?: string, color?: string }>`
+    background-color: ${(props) => (props.backgroundColor && props.backgroundColor || "none")};
+    color: ${(props) => props.color && props.color || "black"};
     display: flex;
     align-items: center;
     justify-content: center;
