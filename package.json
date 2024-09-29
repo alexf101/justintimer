@@ -2,8 +2,8 @@
     "scripts": {
         "build-static": "cp src/index.html assets/* dist/",
         "watch-static": "yarn run build-static; fswatch src/index.html assets/* | xargs -n1 -I{} yarn run build-static",
-        "build-js-dev": "yarn run esbuild src/app.tsx --target=es2015 --bundle --sourcemap --outfile=dist/justintimer.js",
-        "build-js-prod": "yarn run esbuild src/app.tsx --target=es2015 --bundle --minify --tree-shaking=true --outfile=dist/justintimer.js",
+        "build-js-dev": "yarn run esbuild src/app.tsx --define:DEBUG=true --target=es2015 --bundle --sourcemap --outfile=dist/justintimer.js",
+        "build-js-prod": "yarn run esbuild src/app.tsx --define:DEBUG=false --target=es2015 --bundle --minify --tree-shaking=true --outfile=dist/justintimer.js",
         "firebase": "firebase",
         "check": "yarn run tsc --noEmit",
         "watch": "yarn run concurrently 'yarn run check --watch' 'yarn run watch-static' 'yarn run build-js-dev --servedir=dist'",

@@ -6,6 +6,8 @@ import { TabataConfig, TabataLogicHelper } from "../libs/tabata_logic_helper";
 import { TimeSinceState } from "./shared_interfaces";
 import * as colors from "libs/colors";
 
+declare const DEBUG: boolean;
+
 export function timeSoFar(
     lastStartedAt: Moment | undefined,
     previouslyAccumulated: Duration | undefined
@@ -16,11 +18,13 @@ export function timeSoFar(
     } else {
         timeSinceLastStarted = moment.duration(moment().diff(lastStartedAt));
     }
-    // Uncomment to accelerate time for 'testing'
-    timeSinceLastStarted
-        .add(timeSinceLastStarted)
-        .add(timeSinceLastStarted)
-        .add(timeSinceLastStarted);
+    // Use to accelerate time for 'testing'
+    if (DEBUG) {
+        timeSinceLastStarted
+            .add(timeSinceLastStarted)
+            .add(timeSinceLastStarted)
+            .add(timeSinceLastStarted);
+    }
     if (previouslyAccumulated) {
         return timeSinceLastStarted.add(previouslyAccumulated);
     } else {
