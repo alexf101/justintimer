@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import * as colors from "libs/colors";
 
 export const StartStopButton = ({
     running,
@@ -10,7 +11,7 @@ export const StartStopButton = ({
 }) => {
     const text = running ? "Stop" : "Start";
     return (
-        <Button color={running ? "#f00" : "#0edb0e"} onClick={onClick}>
+        <Button color={running ? colors.Red : colors.Green} onClick={onClick} textColor={running ? "white" : "black"}>
             {text}
         </Button>
     );
@@ -18,12 +19,14 @@ export const StartStopButton = ({
 
 interface Props {
     color?: string;
+    textColor?: string;
 }
 export const Button = styled.button<Props>`
     padding: 4px;
     border-radius: 4px;
     font-size: 20px;
     background: ${(props) => (props.color ? props.color : "white")};
+    color: ${(props) => (props.textColor ? props.textColor : "black")};
 `;
 
 export const ClearButton = Button;

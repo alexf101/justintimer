@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import * as ReactDOM from "react-dom";
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import { Stopwatch } from "./pages/stopwatch";
 import { Tabata } from "./pages/tabata";
 import { Timer } from "./pages/timer";
@@ -99,6 +99,7 @@ const App = () => {
     });
     return (
         <div>
+            <GlobalStyles />
             <PaddedCenteredContainer>
                 <TimerChooser />
             </PaddedCenteredContainer>
@@ -115,5 +116,11 @@ const App = () => {
         </div>
     );
 };
+
+const GlobalStyles = createGlobalStyle`
+    * {
+        box-sizing: border-box;
+    }
+`;
 
 ReactDOM.render(<App />, document.getElementById("react"));

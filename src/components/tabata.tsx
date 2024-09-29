@@ -16,10 +16,11 @@ import {
 import { TimeSinceState } from "./shared_interfaces";
 import { TabataTimeRenderer, timeSoFar } from "./time_renderer";
 import { globalYoutubeController } from "libs/youtube_global_controls";
+import _ from "lodash";
 
 interface TabataState extends TimeSinceState {
-    numberOfRounds: number;
-    exercisesPerRound: number;
+    numberOfRounds: number | "";
+    exercisesPerRound: number | "";
     workTime: number;
     restTime: number;
 }
@@ -91,7 +92,9 @@ export class Tabata extends React.Component<{}, TabataState> {
                         console.log("Rest start.");
                         hushPlay(restSound);
                     }}
-                    {...this.state}
+                    numberOfRounds={this.state.numberOfRounds !== "" ? this.state.numberOfRounds : 1}
+                    exercisesPerRound={this.state.exercisesPerRound !== "" ? this.state.exercisesPerRound : 1}
+                    {..._.omit(this.state, "numberOfRounds", "exercisesPerRound")}
                 />
                 <RowDisplayWithEvenSpacing>
                     <StartStopButton
@@ -120,7 +123,7 @@ export class Tabata extends React.Component<{}, TabataState> {
                                         numberOfRounds:
                                             Number.parseInt(
                                                 ev.currentTarget.value
-                                            ) || 0,
+                                            ) || "",
                                     })
                                 }
                             ></input>
@@ -135,7 +138,7 @@ export class Tabata extends React.Component<{}, TabataState> {
                                         exercisesPerRound:
                                             Number.parseInt(
                                                 ev.currentTarget.value
-                                            ) || 0,
+                                            ) || "",
                                     })
                                 }
                             ></input>

@@ -4,6 +4,7 @@ import React from "react";
 import styled from "styled-components";
 import { TabataConfig, TabataLogicHelper } from "../libs/tabata_logic_helper";
 import { TimeSinceState } from "./shared_interfaces";
+import * as colors from "libs/colors";
 
 export function timeSoFar(
     lastStartedAt: Moment | undefined,
@@ -16,10 +17,10 @@ export function timeSoFar(
         timeSinceLastStarted = moment.duration(moment().diff(lastStartedAt));
     }
     // Uncomment to accelerate time for 'testing'
-    // timeSinceLastStarted
-    //     .add(timeSinceLastStarted)
-    //     .add(timeSinceLastStarted)
-    //     .add(timeSinceLastStarted);
+    timeSinceLastStarted
+        .add(timeSinceLastStarted)
+        .add(timeSinceLastStarted)
+        .add(timeSinceLastStarted);
     if (previouslyAccumulated) {
         return timeSinceLastStarted.add(previouslyAccumulated);
     } else {
@@ -122,6 +123,9 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
     getCurrentRound(timeRemaining: Duration) {
         return this.tabataHelper.roundAt(timeRemaining.asSeconds());
     }
+    getTimeRemainingInExercise(timeRemaining: Duration) {
+        return this.getCurrentRound(timeRemaining).remainingTimeInState(timeRemaining.asSeconds());
+    }
     isWorkTime(timeRemaining: Duration): boolean {
         // We want to start with the work interval.
         return this.tabataHelper.stateAt(timeRemaining.asSeconds()) === "work";
@@ -168,41 +172,114 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
             this.justOnceAtTheStart = true;
             this.props.onWork();
         }
+        const seconds = this.getTimeRemainingInExercise(timeRemaining).toFixed(0);
         return (
             <div>
-                <TimeDisplay>
-                    {timeStringNoMillis}
-                    <MillisDisplay>{timeStringMillis}</MillisDisplay>
-                </TimeDisplay>
-                <SideBySide>
-                    <div>
-                        Exercise{" "}
-                        {this.getCurrentRound(timeRemaining).exerciseNumber} of{" "}
-                        {this.props.exercisesPerRound}
-                    </div>
-                    <div>
-                        Round {this.getCurrentRound(timeRemaining).roundNumber}{" "}
-                        of {this.props.numberOfRounds}
-                    </div>
-                </SideBySide>
-                <WorkRestDisplay
-                    isRunning={this.props.running}
-                    isWorkTime={this.isWorkTime(timeRemaining)}
-                    onWork={this.props.onWork}
-                    onRest={this.props.onRest}
-                />
-            </div>
+                <TabataRow>
+                    <ProgressBar>
+                        {Array(this.props.numberOfRounds).fill(null).map((_, round) => {
+                            const isCompletedRound = round > (this.props.numberOfRounds - this.getCurrentRound(timeRemaining).roundNumber);
+                            const isCurrentRound = round === this.props.numberOfRounds - this.getCurrentRound(timeRemaining).roundNumber;
+                            return <ProgressRound completed={isCompletedRound}>
+                                {Array(this.props.exercisesPerRound).fill(null).map((_, exercise) => {
+                                    const isCompletedExercise = exercise > (this.props.exercisesPerRound - this.getCurrentRound(timeRemaining).exerciseNumber);
+                                    const isCurrentExercise = exercise === this.props.exercisesPerRound - this.getCurrentRound(timeRemaining).exerciseNumber;
+                                    return <ProgressExercise completed={isCompletedRound || (isCurrentRound && isCompletedExercise)} />
+                                }
+                                )}
+                            </ProgressRound>
+                        }
+                        )}
+                    </ProgressBar>
+                </TabataRow>
+                <TabataRow>
+                    <WorkRestDisplay
+                        isRunning={this.props.running}
+                        isWorkTime={this.isWorkTime(timeRemaining)}
+                        onWork={this.props.onWork}
+                        onRest={this.props.onRest}
+                    />
+                </TabataRow>
+                <TabataRow backgroundColor={(this.props.running || undefined) && (this.isWorkTime(timeRemaining) ? colors.Green : colors.Red)} color={(this.props.running || undefined) && (this.isWorkTime(timeRemaining) ? "black" : "white")}>
+                    <TimeDisplay>
+                        {seconds}
+                        <MillisDisplay>{timeStringMillis}</MillisDisplay>
+                    </TimeDisplay>
+                </TabataRow>
+                <TabataRow>
+                    <SideBySide>
+                        <ExerciseAndRoundCountContainer>
+                            Round <Big>{this.getCurrentRound(timeRemaining).roundNumber}{" "}</Big>
+                            of {this.props.numberOfRounds}
+                        </ExerciseAndRoundCountContainer>
+                        <ExerciseAndRoundCountContainer>
+                            Exercise{" "}
+                            <Big>{this.getCurrentRound(timeRemaining).exerciseNumber}</Big>
+                            of{" "}
+                            {this.props.exercisesPerRound}
+                        </ExerciseAndRoundCountContainer>
+                    </SideBySide>
+                </TabataRow>
+            </div >
         );
     }
 }
+
+const Big = styled.span`font-size: 2em;`;
+
+const ExerciseAndRoundCountContainer = styled.div`
+    display: inline-block;
+    font-size: 1.5em;
+    padding: 8px;
+    width: 50%;
+    text-align: center;
+    border-left: 1px solid black;
+`;
+
+const ProgressBar = styled.div`
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin: 4px;
+    height: 20px;
+    padding: 2px;
+    background-color: black;
+`;
+
+const ProgressRound = styled.div<{ completed: boolean }>`
+    visibility: ${props => props.completed ? "hidden" : "visible"};
+    border: 2px solid black;
+    width: 30px;
+    height: 100%;
+    flex-basis: 1em;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+`;
+const ProgressExercise = styled.div<{ completed: boolean }>`
+    visibility: ${props => props.completed ? "hidden" : "visible"};
+    border: 1px solid grey;
+    width: 10px;
+    height: 100%;
+    flex-basis: 1em;
+    flex-grow: 1;
+    background-color: blue;
+`;
+
+const TabataRow = styled.div<{ backgroundColor?: string, color?: string }>`
+    display: flex;
+    border: 1px solid black;
+    background-color: ${(props) => (props.backgroundColor !== undefined ? props.backgroundColor : "none")};
+    color: ${(props) => (props.color !== undefined ? props.color : "black")};
+`;
 
 const SideBySide = styled.div`
     display: flex;
     direction: row;
     justify-content: space-between;
-    padding: 16px 4px;
     font-size: larger;
     font-family: sans-serif;
+    width: 100%;
 `;
 
 interface WorkRestDisplayProps {
@@ -226,21 +303,22 @@ class WorkRestDisplay extends React.Component<WorkRestDisplayProps> {
     }
     render() {
         return (
-            <WorkRestDisplayRoot workTime={this.props.isWorkTime}>
+            <WorkRestDisplayRoot backgroundColor={(this.props.isRunning || undefined) && (this.props.isWorkTime ? colors.Green : colors.Red)} color={(this.props.isRunning || undefined) && (this.props.isWorkTime ? "black" : "white")}>
                 {this.props.isWorkTime ? "Work" : "Rest"}
             </WorkRestDisplayRoot>
         );
     }
 }
-const WorkRestDisplayRoot = styled.div<{ workTime: boolean }>`
-    background-color: ${(props) => (props.workTime ? "green" : "red")};
-    color: ${(props) => (props.workTime ? "black" : "white")};
+const WorkRestDisplayRoot = styled.div<{ backgroundColor?: string, color?: string }>`
+    background-color: ${(props) => (props.backgroundColor && props.backgroundColor || "none")};
+    color: ${(props) => props.color && props.color || "black"};
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 24px;
     font-size: 2rem;
     font-family: sans-serif;
+    width: 100%;
 `;
 
 interface CountdownProps extends TimeSinceState {
