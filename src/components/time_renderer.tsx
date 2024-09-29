@@ -196,12 +196,18 @@ export class TabataTimeRenderer extends React.Component<TabataProps, {}> {
                 </TabataRow>
                 <TabataRow>
                     <ProgressBar>
-                        {Array(this.props.numberOfRounds).fill(null).map(round =>
-                            <ProgressRound completed={round >= (this.props.numberOfRounds - this.getCurrentRound(timeRemaining).roundNumber)}>
-                                {Array(this.props.exercisesPerRound - this.getCurrentRound(timeRemaining).exerciseNumber).fill(null).map(exercise =>
-                                    <ProgressExercise completed={exercise >= (this.props.exercisesPerRound - this.getCurrentRound(timeRemaining).exerciseNumber)} />
+                        {Array(this.props.numberOfRounds).fill(null).map((_, round) => {
+                            const isCompletedRound = round > (this.props.numberOfRounds - this.getCurrentRound(timeRemaining).roundNumber);
+                            const isCurrentRound = round === this.props.numberOfRounds - this.getCurrentRound(timeRemaining).roundNumber;
+                            return <ProgressRound completed={isCompletedRound}>
+                                {Array(this.props.exercisesPerRound).fill(null).map((_, exercise) => {
+                                    const isCompletedExercise = exercise > (this.props.exercisesPerRound - this.getCurrentRound(timeRemaining).exerciseNumber);
+                                    const isCurrentExercise = exercise === this.props.exercisesPerRound - this.getCurrentRound(timeRemaining).exerciseNumber;
+                                    return <ProgressExercise completed={isCompletedRound || (isCurrentRound && isCompletedExercise)} />
+                                }
                                 )}
                             </ProgressRound>
+                        }
                         )}
                     </ProgressBar>
                 </TabataRow>
@@ -234,29 +240,29 @@ const ProgressBar = styled.div`
     flex-direction: row;
     width: 100%;
     margin: 4px;
-    height: 16px;
-    background-color: lightgray;
-    border: 1px solid black;
+    height: 20px;
+    padding: 2px;
+    background-color: black;
 `;
 
-const ProgressRound = styled.div<{ completed?: boolean }>`
-    border: 1px solid green;
+const ProgressRound = styled.div<{ completed: boolean }>`
+    visibility: ${props => props.completed ? "hidden" : "visible"};
+    border: 2px solid black;
     width: 30px;
-    height: 16px;
+    height: 100%;
     flex-basis: 1em;
     flex-grow: 1;
     display: flex;
     flex-direction: row;
-    ${completed => completed && "border: none;"}
 `;
-const ProgressExercise = styled.div<{ completed?: boolean }>`
+const ProgressExercise = styled.div<{ completed: boolean }>`
+    visibility: ${props => props.completed ? "hidden" : "visible"};
     border: 1px solid grey;
-    background-color: lightblue;
     width: 10px;
-    height: 16px;
+    height: 100%;
     flex-basis: 1em;
     flex-grow: 1;
-    ${completed => completed && "border: none;"}
+    background-color: blue;
 `;
 
 const TabataRow = styled.div`
