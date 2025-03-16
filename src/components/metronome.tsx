@@ -11,9 +11,13 @@ import {
 import { CountupTimeRenderer, timeSoFar } from "./time_renderer";
 import { Slider as MUISlider } from "@mui/material";
 
+interface MetronomeState {
+    running: boolean;
+    bpm: number;
+}
 export class Metronome extends React.Component<
     {},
-    { running: boolean; bpm: number }
+    MetronomeState
 > {
     nextBeatTimer: null | NodeJS.Timeout = null;
     state = {
@@ -39,7 +43,7 @@ export class Metronome extends React.Component<
     soundClick = () => {
         console.log("click...");
     };
-    render() {
+    componentDidUpdate(prevProps: {}, prevState: MetronomeState) {
         // Update the state of audible timer if it's no longer in sync with "running".
         if (this.state.running && this.nextBeatTimer === null) {
             // Near enough is good enough for this because the errors don't compound over time; we
@@ -51,7 +55,15 @@ export class Metronome extends React.Component<
             );
         } else if (!this.state.running && this.nextBeatTimer !== null) {
             clearInterval(this.nextBeatTimer);
+        } else if (this.state.running && this.state.bpm !== prevState.bpm) {
+            clearInterval(this.nextBeatTimer!);
+            this.nextBeatTimer = setInterval(
+                this.soundClick,
+                this.beatIntervalMillis,
+            );
         }
+    }
+    render() {
         return (
             <SingleColumnDisplay>
                 <Slider
@@ -84,6 +96,7 @@ const Slider = (props: { bpm: number; onSetBpm: (bpm: number) => void }) => {
             step={10}
             min={10}
             max={180}
+            valueLabelDisplay={'auto'}
         />
     );
 };
