@@ -18,6 +18,7 @@ as they suggest during setup in case it becomes useful and to turn on analytics 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import { Metronome } from "pages/metronome";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -57,7 +58,7 @@ const TimerNavBar = styled.div`
     font-size: 1rem;
 `;
 
-type pages = "stopwatch" | "timer" | "tabata" | "dual-timers" | "unknown";
+type pages = "stopwatch" | "timer" | "tabata" | "dual-timers" | "metronome" | "unknown";
 function pageSelect(choices: { [K in pages]: React.ReactNode }) {
     let page = window.location.hash.substring(1);
     if (!page || page === "") {
@@ -108,6 +109,7 @@ const App = () => {
                 stopwatch: <Stopwatch />,
                 "dual-timers": <DualTimer />,
                 tabata: <Tabata />,
+                metronome: <Metronome />,
                 unknown: "not found",
             })}
             <PaddedCenteredContainer>
