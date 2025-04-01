@@ -14,61 +14,83 @@ import { Slider as MUISlider } from "@mui/material";
 interface MetronomeState {
     running: boolean;
     bpm: number;
+    beatsPerBar: number;
+    currentBeat: number;
 }
-export class Metronome extends React.Component<
-    {},
-    MetronomeState
-> {
+
+export class Metronome extends React.Component<{}, MetronomeState> {
     nextBeatTimer: null | NodeJS.Timeout = null;
     state = {
         running: false,
         bpm: 60,
+        beatsPerBar: 4,
+        currentBeat: 1,
     };
+
     start = () => {
         this.setState({
             running: true,
         });
     };
+
     stop = () => {
         this.setState({
             running: false,
+            currentBeat: 1, // Reset to the first beat when stopped
         });
     };
+
     get beatIntervalMillis() {
-        // Quick check:
-        // 1. 60 bpm should equal 1000 milliseconds: (60 / 60) * 1000.
-        // 2. 120 bpm should equal 500 milliseconds: (60 / 120) * 1000.
         return (60 / this.state.bpm) * 1000;
     }
-    soundClick = () => {
-        console.log("click...");
+
+    handleNextBeat = () => {
+        const { currentBeat, beatsPerBar } = this.state;
+
+        // Log the sound based on the current beat
+        if (currentBeat === 1) {
+            console.log("Emphasised click (first beat of the bar)...");
+        } else {
+            console.log("Regular click...");
+        }
+
+        // Update the state to progress to the next beat
+        this.setState({
+            currentBeat: currentBeat % beatsPerBar + 1,
+        });
     };
+
     componentDidUpdate(prevProps: {}, prevState: MetronomeState) {
-        // Update the state of audible timer if it's no longer in sync with "running".
         if (this.state.running && this.nextBeatTimer === null) {
-            // Near enough is good enough for this because the errors don't compound over time; we
-            // only care that the intervals are close to the desired interval, not that the overall
-            // time elapsed is accurate.
             this.nextBeatTimer = setInterval(
-                this.soundClick,
+                this.handleNextBeat,
                 this.beatIntervalMillis,
             );
         } else if (!this.state.running && this.nextBeatTimer !== null) {
             clearInterval(this.nextBeatTimer);
-        } else if (this.state.running && this.state.bpm !== prevState.bpm) {
+            this.nextBeatTimer = null;
+        } else if (
+            this.state.running &&
+            (this.state.bpm !== prevState.bpm || this.state.beatsPerBar !== prevState.beatsPerBar)
+        ) {
             clearInterval(this.nextBeatTimer!);
             this.nextBeatTimer = setInterval(
-                this.soundClick,
+                this.handleNextBeat,
                 this.beatIntervalMillis,
             );
         }
     }
+
     render() {
         return (
             <SingleColumnDisplay>
                 <Slider
                     onSetBpm={(bpm: number) => this.setState({ bpm })}
+                    onSetBarLength={(beatsPerBar: number) =>
+                        this.setState({ beatsPerBar })
+                    }
                     bpm={this.state.bpm}
+                    beatsPerBar={this.state.beatsPerBar}
                 />
                 <RowDisplayWithEvenSpacing>
                     <StartStopButton
@@ -87,16 +109,38 @@ export class Metronome extends React.Component<
     }
 }
 
-const Slider = (props: { bpm: number; onSetBpm: (bpm: number) => void }) => {
+const Slider = (props: {
+    bpm: number;
+    beatsPerBar: number;
+    onSetBpm: (bpm: number) => void;
+    onSetBarLength: (beatsPerBar: number) => void;
+}) => {
     return (
-        <MUISlider
-            value={props.bpm}
-            onChange={(_, val) => props.onSetBpm(val as number)}
-            marks
-            step={10}
-            min={10}
-            max={180}
-            valueLabelDisplay={'auto'}
-        />
+        <div>
+            <label>
+                Beats per Minute
+                <MUISlider
+                    value={props.bpm}
+                    onChange={(_, val) => props.onSetBpm(val as number)}
+                    marks
+                    step={10}
+                    min={10}
+                    max={180}
+                    valueLabelDisplay={"auto"}
+                />
+            </label>
+            <label>
+                Beats per Bar
+                <MUISlider
+                    value={props.beatsPerBar}
+                    onChange={(_, val) => props.onSetBarLength(val as number)}
+                    marks
+                    step={1}
+                    min={1}
+                    max={8}
+                    valueLabelDisplay={"auto"}
+                />
+            </label>
+        </div>
     );
 };
